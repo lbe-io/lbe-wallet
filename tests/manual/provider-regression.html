@@ -1,0 +1,774 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LBE Wallet Provider Regression</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f8fb;
+        --panel: #ffffff;
+        --text: #132238;
+        --muted: #5f6b7a;
+        --line: #d9e2ec;
+        --accent: #0a7cff;
+        --accent-soft: #e8f2ff;
+        --danger: #d63939;
+        --ok: #16834f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
+        color: var(--text);
+      }
+
+      main {
+        width: min(1200px, calc(100vw - 32px));
+        margin: 24px auto 48px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 10px 24px rgba(19, 34, 56, 0.06);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+      }
+
+      h3 {
+        font-size: 14px;
+        margin-bottom: 8px;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .grid.two {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.three {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      label {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font: inherit;
+        background: #fff;
+        color: var(--text);
+      }
+
+      textarea {
+        min-height: 84px;
+        resize: vertical;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      button {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font: inherit;
+        cursor: pointer;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      button.primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      button.danger {
+        background: #fff1f1;
+        color: var(--danger);
+      }
+
+      button.ghost {
+        background: #f2f4f7;
+        color: var(--text);
+      }
+
+      .meta {
+        display: grid;
+        gap: 8px;
+        font-size: 13px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #f2f4f7;
+        color: var(--text);
+      }
+
+      .status-ok {
+        color: var(--ok);
+      }
+
+      .status-error {
+        color: var(--danger);
+      }
+
+      pre {
+        margin: 0;
+        padding: 12px;
+        border-radius: 12px;
+        background: #0f1720;
+        color: #d9edf7;
+        overflow: auto;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      #log {
+        min-height: 280px;
+        max-height: 420px;
+      }
+
+      .note {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      li + li {
+        margin-top: 6px;
+      }
+
+      @media (max-width: 900px) {
+        .grid.two,
+        .grid.three {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel grid">
+        <div class="grid two">
+          <div class="grid">
+            <h1>LBE Wallet Provider Manual Regression Page</h1>
+            <p class="note">
+              Used to validate provider authorization boundaries, origin isolation, approval flow, and common dApp capabilities after `PR-0 ~ PR-3`.
+            </p>
+          </div>
+          <div class="meta">
+            <div class="pill">Current Origin: <strong id="current-origin"></strong></div>
+            <div class="pill">Provider Status: <strong id="provider-status">Not Checked</strong></div>
+            <div class="pill">Last Signer: <strong id="last-signer">Not Available</strong></div>
+          </div>
+        </div>
+        <div class="note">
+          Open the same page from both `http://127.0.0.1:4173/tests/manual/provider-regression.html`
+          and `http://localhost:4173/tests/manual/provider-regression.html` to validate
+          whether origin-scoped authorization is properly isolated.
+        </div>
+      </section>
+
+      <section class="panel grid">
+        <h2>Test Parameters</h2>
+        <div class="grid three">
+          <div class="field">
+            <label for="chain-id">Primary chainId</label>
+            <input id="chain-id" value="lbe-1" />
+          </div>
+          <div class="field">
+            <label for="alt-chain-id">Alternative chainId</label>
+            <input id="alt-chain-id" value="cosmoshub-4" />
+          </div>
+          <div class="field">
+            <label for="override-account-index">Privilege boundary test accountIndex</label>
+            <input id="override-account-index" value="999" />
+          </div>
+        </div>
+        <div class="grid two">
+          <div class="field">
+            <label for="arbitrary-text">ADR-036 message</label>
+            <textarea id="arbitrary-text">manual regression arbitrary sign</textarea>
+          </div>
+          <div class="field">
+            <label for="send-mode">sendTx mode</label>
+            <select id="send-mode">
+              <option value="sync">sync</option>
+              <option value="async">async</option>
+              <option value="block">block</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="suggest-chain-info">suggestChain payload (JSON)</label>
+          <textarea id="suggest-chain-info">{
+  "chainId": "lbe-1",
+  "chainName": "LBE",
+  "rpc": "https://rpc.litbee.io",
+  "rest": "https://api.litbee.io",
+  "stakeCurrency": {
+    "coinDenom": "LBE",
+    "coinMinimalDenom": "ulbe",
+    "coinDecimals": 18
+  },
+  "bip44": {
+    "coinType": 118
+  },
+  "bech32Config": {
+    "bech32PrefixAccAddr": "cosmos",
+    "bech32PrefixAccPub": "cosmospub",
+    "bech32PrefixValAddr": "cosmosvaloper",
+    "bech32PrefixValPub": "cosmosvaloperpub",
+    "bech32PrefixConsAddr": "cosmosvalcons",
+    "bech32PrefixConsPub": "cosmosvalconspub"
+  },
+  "currencies": [
+    {
+      "coinDenom": "LBE",
+      "coinMinimalDenom": "ulbe",
+      "coinDecimals": 18
+    },
+    {
+      "coinDenom": "ZDB",
+      "coinMinimalDenom": "ZDB",
+      "coinDecimals": 18
+    }
+  ],
+  "feeCurrencies": [
+    {
+      "coinDenom": "LBE",
+      "coinMinimalDenom": "ulbe",
+      "coinDecimals": 18,
+      "gasPriceStep": {
+        "low": 0.01,
+        "average": 0.025,
+        "high": 0.03
+      }
+    }
+  ],
+  "features": [
+    "stargate",
+    "ibc-transfer"
+  ]
+}</textarea>
+        </div>
+      </section>
+
+      <section class="panel grid">
+        <h2>Core Capabilities</h2>
+        <div class="toolbar">
+          <button class="primary" data-action="detectProvider">Detect Provider</button>
+          <button data-action="getChainInfos">getChainInfos</button>
+          <button data-action="suggestChain">suggestChain</button>
+          <button data-action="getProviderState">raw getProviderState</button>
+          <button class="ghost" data-action="clearLog">Clear Log</button>
+        </div>
+      </section>
+
+      <section class="panel grid">
+        <h2>Connection & Chain Authorization</h2>
+        <div class="toolbar">
+          <button class="primary" data-action="enablePrimary">enable(primary)</button>
+          <button data-action="enableBoth">enable(primary+alternative)</button>
+          <button data-action="disablePrimary">disable(primary)</button>
+          <button class="danger" data-action="disableAll">disable(all)</button>
+        </div>
+        <p class="note">
+          Validates first-time connect, reconnect across origins, chain enable/disable behavior, and rejection after closing approval.
+        </p>
+      </section>
+
+      <section class="panel grid">
+        <h2>Account Read</h2>
+        <div class="toolbar">
+          <button data-action="getKey">getKey</button>
+          <button data-action="getOfflineSignerAccounts">getOfflineSignerAccounts</button>
+          <button data-action="getOfflineSignerAccountsKeplr">window.getOfflineSigner().getAccounts()</button>
+          <button class="danger" data-action="getKeyWithOverride">raw getKey(accountIndex override)</button>
+          <button class="danger" data-action="getKeyDisabledChain">getKey(alt chain, should fail when disabled)</button>
+        </div>
+      </section>
+
+      <section class="panel grid">
+        <h2>Signing</h2>
+        <div class="toolbar">
+          <button data-action="signAmino">signAmino</button>
+          <button data-action="signDirect">signDirect</button>
+          <button data-action="signArbitrary">signArbitrary</button>
+          <button data-action="verifyArbitrary">verifyArbitrary</button>
+          <button class="danger" data-action="signDirectWithOverride">raw signDirect(accountIndex override)</button>
+        </div>
+        <p class="note">
+          Validates normal signing, arbitrary signature verification, approval UI rendering, privilege boundary checks for bound accounts, and rejection after closing approval.
+        </p>
+      </section>
+
+      <section class="panel grid">
+        <h2>Broadcast</h2>
+        <div class="toolbar">
+          <button data-action="sendTxInvalid">sendTx(intentionally invalid txBytes)</button>
+        </div>
+        <p class="note">
+          This button sends intentionally invalid txBytes. Expected behavior: request flow and approval work normally, then a broadcast error is returned after confirmation (no freeze or crash).
+        </p>
+      </section>
+
+      <section class="panel grid">
+        <h2>Events & Results</h2>
+        <div class="grid two">
+          <div class="grid">
+            <h3>Latest Result</h3>
+            <pre id="result">{}</pre>
+          </div>
+          <div class="grid">
+            <h3>Runtime Log</h3>
+            <pre id="log"></pre>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      (() => {
+        const $ = (id) => document.getElementById(id);
+        const originEl = $('current-origin');
+        const providerStatusEl = $('provider-status');
+        const lastSignerEl = $('last-signer');
+        const resultEl = $('result');
+        const logEl = $('log');
+
+        const state = {
+          lastKey: null,
+          eventBound: false,
+          lastArbitrarySignature: null,
+          lastArbitraryData: null,
+          lastArbitrarySigner: null,
+        };
+
+        const currentOrigin = window.location.origin === 'null' ? window.location.href : window.location.origin;
+        originEl.textContent = currentOrigin;
+
+        const safeJson = (value) => {
+          try {
+            return JSON.stringify(
+              value,
+              (_key, val) => {
+                if (typeof val === 'bigint') {
+                  return val.toString();
+                }
+                if (val instanceof Uint8Array) {
+                  return Array.from(val);
+                }
+                return val;
+              },
+              2,
+            );
+          } catch (error) {
+            return String(error);
+          }
+        };
+
+        const appendLog = (title, value, isError = false) => {
+          const prefix = isError ? '[ERROR]' : '[INFO]';
+          const message = typeof value === 'string' ? value : safeJson(value);
+          logEl.textContent = `${new Date().toLocaleTimeString()} ${prefix} ${title}\n${message}\n\n${logEl.textContent}`;
+        };
+
+        const setResult = (label, value) => {
+          resultEl.textContent = `${label}\n${safeJson(value)}`;
+        };
+
+        const markProvider = (ready) => {
+          providerStatusEl.textContent = ready ? 'Injected' : 'Not Injected';
+          providerStatusEl.className = ready ? 'status-ok' : 'status-error';
+        };
+
+        const getProvider = () => {
+          if (!window.lbeWallet) {
+            throw new Error('window.lbeWallet is not injected. Please make sure the extension is enabled and this page is within the allowed injection sites.');
+          }
+          return window.lbeWallet;
+        };
+
+        const primaryChainId = () => $('chain-id').value.trim();
+        const altChainId = () => $('alt-chain-id').value.trim();
+        const overrideAccountIndex = () => Number($('override-account-index').value.trim() || '999');
+        const arbitraryText = () => $('arbitrary-text').value;
+        const sendMode = () => $('send-mode').value;
+        const suggestChainInfoRaw = () => $('suggest-chain-info').value;
+
+        const parseJsonObject = (raw, fieldName) => {
+          let parsed;
+          try {
+            parsed = JSON.parse(raw);
+          } catch {
+            throw new Error(`${fieldName} must be valid JSON`);
+          }
+          if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+            throw new Error(`${fieldName} must be a JSON object`);
+          }
+          return parsed;
+        };
+
+        const resolveSuggestChainInfo = () => {
+          const raw = suggestChainInfoRaw().trim();
+          if (!raw) {
+            return { chainId: primaryChainId() };
+          }
+          const chainInfo = parseJsonObject(raw, 'suggestChain payload');
+          if (typeof chainInfo.chainId !== 'string' || !chainInfo.chainId.trim()) {
+            chainInfo.chainId = primaryChainId();
+          }
+          return chainInfo;
+        };
+
+        const toBase64 = (bytes) => {
+          let binary = '';
+          bytes.forEach((byte) => {
+            binary += String.fromCharCode(byte);
+          });
+          return btoa(binary);
+        };
+
+        const ensureKey = async () => {
+          if (state.lastKey && state.lastKey.bech32Address) {
+            return state.lastKey;
+          }
+          const key = await getProvider().getKey(primaryChainId());
+          state.lastKey = key;
+          lastSignerEl.textContent = key.bech32Address || key.address || 'Unknown';
+          return key;
+        };
+
+        const buildAminoDoc = (signer, chainId) => ({
+          chain_id: chainId,
+          account_number: '0',
+          sequence: '0',
+          fee: {
+            amount: [{ denom: 'uatom', amount: '1' }],
+            gas: '200000',
+          },
+          msgs: [
+            {
+              type: 'cosmos-sdk/MsgSend',
+              value: {
+                from_address: signer,
+                to_address: signer,
+                amount: [{ denom: 'uatom', amount: '1' }],
+              },
+            },
+          ],
+          memo: 'manual-regression-amino',
+        });
+
+        const buildDirectDoc = (chainId) => ({
+          chainId,
+          accountNumber: '0',
+          bodyBytes: toBase64(Uint8Array.from([10, 0, 18, 0])),
+          authInfoBytes: toBase64(Uint8Array.from([18, 0, 26, 0])),
+        });
+
+        const bindEventsOnce = () => {
+          if (state.eventBound || !window.lbeWallet) {
+            return;
+          }
+          state.eventBound = true;
+
+          const events = ['connect', 'accountsChanged', 'chainChanged', 'networkChanged', 'disabled'];
+          events.forEach((eventName) => {
+            window.lbeWallet.on(eventName, (...args) => {
+              appendLog(`provider event: ${eventName}`, args);
+            });
+          });
+        };
+
+        const run = async (label, task) => {
+          appendLog(label, 'Start');
+          try {
+            const result = await task();
+            setResult(label, result);
+            appendLog(label, result);
+            return result;
+          } catch (error) {
+            setResult(label, {
+              message: error?.message || String(error),
+              code: error?.code,
+              kind: error?.kind,
+              data: error?.data,
+            });
+            appendLog(
+              label,
+              {
+                message: error?.message || String(error),
+                code: error?.code,
+                kind: error?.kind,
+                data: error?.data,
+              },
+              true,
+            );
+            throw error;
+          }
+        };
+
+        const actions = {
+          async detectProvider() {
+            const ready = !!window.lbeWallet;
+            markProvider(ready);
+            if (ready) {
+              bindEventsOnce();
+            }
+            setResult('detectProvider', {
+              hasLbeWallet: ready,
+              hasOfflineSigner: typeof window.getOfflineSigner === 'function',
+              hasOfflineSignerOnlyAmino: typeof window.getOfflineSignerOnlyAmino === 'function',
+              hasOfflineSignerAuto: typeof window.getOfflineSignerAuto === 'function',
+              origin: currentOrigin,
+            });
+          },
+
+          async getChainInfos() {
+            return run('getChainInfos', () => getProvider().getChainInfos());
+          },
+
+          async suggestChain() {
+            return run('suggestChain', () =>
+              getProvider().request({
+                method: 'suggestChain',
+                params: {
+                  chainInfo: resolveSuggestChainInfo(),
+                },
+              }),
+            );
+          },
+
+          async getProviderState() {
+            return run('raw getProviderState', () =>
+              getProvider().request({
+                method: 'getProviderState',
+              }),
+            );
+          },
+
+          async enablePrimary() {
+            return run('enable(primary)', () => getProvider().enable(primaryChainId()));
+          },
+
+          async enableBoth() {
+            return run('enable(primary+alternative)', () => getProvider().enable([primaryChainId(), altChainId()]));
+          },
+
+          async disablePrimary() {
+            return run('disable(primary)', () => getProvider().disable(primaryChainId()));
+          },
+
+          async disableAll() {
+            return run('disable(all)', () => getProvider().disable());
+          },
+
+          async getKey() {
+            const result = await run('getKey', () => getProvider().getKey(primaryChainId()));
+            state.lastKey = result;
+            lastSignerEl.textContent = result?.bech32Address || result?.address || 'Unknown';
+            return result;
+          },
+
+          async getOfflineSignerAccounts() {
+            return run('getOfflineSignerAccounts', () =>
+              getProvider().request({
+                method: 'getOfflineSignerAccounts',
+                params: { chainId: primaryChainId() },
+              }),
+            );
+          },
+
+          async getOfflineSignerAccountsKeplr() {
+            return run('window.getOfflineSigner().getAccounts()', () => window.getOfflineSigner(primaryChainId()).getAccounts());
+          },
+
+          async getKeyWithOverride() {
+            return run('raw getKey(accountIndex override)', () =>
+              getProvider().request({
+                method: 'getKey',
+                params: {
+                  chainId: primaryChainId(),
+                  accountIndex: overrideAccountIndex(),
+                },
+              }),
+            );
+          },
+
+          async getKeyDisabledChain() {
+            return run('getKey(alt chain)', () => getProvider().getKey(altChainId()));
+          },
+
+          async signAmino() {
+            const key = await ensureKey();
+            return run('signAmino', () => getProvider().signAmino(primaryChainId(), key.bech32Address, buildAminoDoc(key.bech32Address, primaryChainId())));
+          },
+
+          async signDirect() {
+            const key = await ensureKey();
+            return run('signDirect', () => getProvider().signDirect(primaryChainId(), key.bech32Address, buildDirectDoc(primaryChainId())));
+          },
+
+          async signArbitrary() {
+            const key = await ensureKey();
+            const result = await run('signArbitrary', () =>
+              getProvider().request({
+                method: 'signArbitrary',
+                params: {
+                  chainId: primaryChainId(),
+                  signer: key.bech32Address,
+                  data: arbitraryText(),
+                },
+              }),
+            );
+            state.lastArbitrarySignature = result;
+            state.lastArbitraryData = arbitraryText();
+            state.lastArbitrarySigner = key.bech32Address;
+            return result;
+          },
+
+          async verifyArbitrary() {
+            const key = await ensureKey();
+            const signer = state.lastArbitrarySigner || key.bech32Address;
+            const signature = state.lastArbitrarySignature;
+
+            if (!signature) {
+              throw new Error('No arbitrary signature found. Run signArbitrary first.');
+            }
+
+            return run('verifyArbitrary', () =>
+              getProvider().request({
+                method: 'verifyArbitrary',
+                params: {
+                  chainId: primaryChainId(),
+                  signer,
+                  data: state.lastArbitraryData ?? arbitraryText(),
+                  signature,
+                },
+              }),
+            );
+          },
+
+          async signDirectWithOverride() {
+            const key = await ensureKey();
+            return run('raw signDirect(accountIndex override)', () =>
+              getProvider().request({
+                method: 'signDirect',
+                params: {
+                  chainId: primaryChainId(),
+                  signer: key.bech32Address,
+                  signDoc: buildDirectDoc(primaryChainId()),
+                  accountIndex: overrideAccountIndex(),
+                },
+              }),
+            );
+          },
+
+          async sendTxInvalid() {
+            return run('sendTx(intentionally invalid txBytes)', () =>
+              getProvider().request({
+                method: 'sendTx',
+                params: {
+                  chainId: primaryChainId(),
+                  txBytes: [10, 0, 18, 0],
+                  mode: sendMode(),
+                },
+              }),
+            );
+          },
+
+          async clearLog() {
+            logEl.textContent = '';
+            resultEl.textContent = '{}';
+          },
+        };
+
+        document.querySelectorAll('[data-action]').forEach((button) => {
+          button.addEventListener('click', async () => {
+            const action = button.getAttribute('data-action');
+            if (!action || typeof actions[action] !== 'function') {
+              return;
+            }
+            try {
+              await actions[action]();
+            } catch {
+              // Errors are already recorded in run()
+            }
+          });
+        });
+
+        window.addEventListener('lbeWallet#initialized', () => {
+          markProvider(true);
+          bindEventsOnce();
+          appendLog('provider', 'Received lbeWallet#initialized');
+        });
+
+        setTimeout(() => {
+          const ready = !!window.lbeWallet;
+          markProvider(ready);
+          if (ready) {
+            bindEventsOnce();
+          }
+        }, 800);
+      })();
+    </script>
+  </body>
+</html>

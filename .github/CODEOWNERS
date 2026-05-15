@@ -1,0 +1,32 @@
+# Security-critical wallet and provider paths.
+# Replace placeholder owners below with your real GitHub users/teams.
+
+* @lbe-wallet-maintainers
+
+# Core wallet domain and key handling
+/src/cosmos/** @lbe-wallet-security
+
+# Extension runtime boundary
+/src/entrypoints/background/** @lbe-wallet-security
+/src/entrypoints/content/** @lbe-wallet-security
+/src/entrypoints/inpage.ts @lbe-wallet-security
+
+# Shared messaging/protocol boundary
+/src/shared/messaging/** @lbe-wallet-security
+/src/shared/events/** @lbe-wallet-security
+/src/shared/constants.ts @lbe-wallet-security
+
+# Approval and signing UI flows
+/src/popup/app/approval/** @lbe-wallet-security
+/src/popup/app/modal/send*/** @lbe-wallet-security
+/src/popup/app/modal/password/** @lbe-wallet-security
+/src/popup/app/phrase/** @lbe-wallet-security
+
+# Release and security governance files
+/SECURITY.md @lbe-wallet-security
+/SECURITY_BOUNDARY.md @lbe-wallet-security
+/REPRODUCIBLE_BUILD.md @lbe-wallet-security
+/RELEASE_VERIFICATION.md @lbe-wallet-security
+/OPEN_SOURCE_AUDIT_SCOPE.md @lbe-wallet-security
+/package.json @lbe-wallet-maintainers
+/yarn.lock @lbe-wallet-maintainers

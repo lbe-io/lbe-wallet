@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LBE Wallet Test DApp</title>
+    <style>
+      :root {
+        --bg: #f2f4f8;
+        --panel: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --border: #cbd5e1;
+        --brand: #0b5fff;
+        --brand-hover: #0042c7;
+        --ok: #0f9d58;
+        --error: #b3261e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: radial-gradient(circle at top, #e6ecff 0%, var(--bg) 40%);
+        color: var(--text);
+        font-family: "IBM Plex Sans", "PingFang SC", "Noto Sans SC", sans-serif;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 28px auto;
+        padding: 0 18px 32px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+      }
+
+      .sub {
+        margin: 0 0 20px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 16px;
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: #fff;
+        font-size: 13px;
+      }
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #94a3b8;
+      }
+
+      .dot.ok {
+        background: var(--ok);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 16px;
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .row > button {
+        flex: 1 1 240px;
+        min-width: 0;
+        overflow: hidden;
+        white-space: normal;
+        line-height: 1.25;
+      }
+
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      input,
+      textarea,
+      button {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font: inherit;
+      }
+
+      input,
+      textarea {
+        padding: 9px 10px;
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+        font-family: "SFMono-Regular", Consolas, monospace;
+      }
+
+      button {
+        cursor: pointer;
+        padding: 10px 12px;
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+        font-weight: 600;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        hyphens: auto;
+      }
+
+      button:hover {
+        background: var(--brand-hover);
+        border-color: var(--brand-hover);
+      }
+
+      button.secondary {
+        background: #fff;
+        color: var(--text);
+      }
+
+      .log {
+        margin-top: 14px;
+        background: #0b1220;
+        color: #e2e8f0;
+        border-radius: 12px;
+        padding: 12px;
+        min-height: 220px;
+        max-height: 380px;
+        overflow: auto;
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.45;
+        white-space: pre-wrap;
+      }
+
+      .hint {
+        color: var(--muted);
+        margin: 0;
+        font-size: 12px;
+      }
+
+      @media (max-width: 900px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>LBE Wallet Test DApp</h1>
+      <p class="sub">Use real injected API calls from <code>window.lbeWallet</code>.</p>
+      <div class="status"><span id="statusDot" class="dot"></span><span id="statusText">Waiting for wallet injection...</span></div>
+
+      <div class="grid">
+        <section class="card">
+          <h2>1) Connect / Basic</h2>
+          <div class="stack">
+            <input id="chainIdsInput" value="lbe-1,cosmoshub-4" placeholder="chainIds, comma separated" />
+            <div class="row">
+              <button id="enableBtn">window.lbeWallet.enable(chainIds)</button>
+              <button id="getChainInfosBtn" class="secondary">getChainInfos()</button>
+            </div>
+            <div class="row">
+              <button id="disconnectBtn" class="secondary">window.lbeWallet.disable()</button>
+            </div>
+            <input id="singleChainIdInput" value="lbe-1" placeholder="single chainId" />
+            <div class="row">
+              <button id="getKeyBtn">getKey(chainId)</button>
+              <button id="getAccountsBtn" class="secondary">getOfflineSigner(chainId).getAccounts()</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>2) Sign</h2>
+          <div class="stack">
+            <input id="signerInput" placeholder="signer address" />
+            <textarea id="aminoDocInput" spellcheck="false"></textarea>
+            <textarea id="signOptionsInput" spellcheck="false"></textarea>
+            <div class="row">
+              <button id="signAminoBtn">signAmino(chainId, signer, signDoc)</button>
+              <button id="signDirectBtn" class="secondary">signDirect(chainId, signer, signDoc)</button>
+            </div>
+            <div class="row">
+              <button id="offlineSignAminoBtn" class="secondary">getOfflineSigner(...).signAmino(...)</button>
+              <button id="offlineSignDirectBtn" class="secondary">getOfflineSigner(...).signDirect(...)</button>
+            </div>
+            <p class="hint">Tip: signDirect usually requires a valid protobuf signDoc from your chain SDK.</p>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>3) Raw request()</h2>
+          <div class="stack">
+            <input id="rawMethodInput" value="suggestChain" placeholder="request method" />
+            <textarea id="rawParamsInput" spellcheck="false"></textarea>
+            <button id="rawRequestBtn">window.lbeWallet.request({ method, params })</button>
+            <button id="suggestChainBtn" class="secondary">suggestChain(chainInfo)</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>4) Events</h2>
+          <div class="stack">
+            <div class="row">
+              <button id="bindEventsBtn">Bind Events</button>
+              <button id="unbindEventsBtn" class="secondary">Unbind Events</button>
+            </div>
+            <p class="hint">Binds <code>connect</code> <code>accountsChanged</code> <code>chainChanged</code> <code>networkChanged</code> <code>disabled</code>.</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="row" style="margin-top: 12px">
+        <button id="clearLogBtn" class="secondary">Clear Log</button>
+      </div>
+      <pre id="log" class="log"></pre>
+    </div>
+
+    <script>
+      const statusDot = document.getElementById('statusDot');
+      const statusText = document.getElementById('statusText');
+      const logEl = document.getElementById('log');
+
+      const chainIdsInput = document.getElementById('chainIdsInput');
+      const singleChainIdInput = document.getElementById('singleChainIdInput');
+      const signerInput = document.getElementById('signerInput');
+      const aminoDocInput = document.getElementById('aminoDocInput');
+      const signOptionsInput = document.getElementById('signOptionsInput');
+      const rawMethodInput = document.getElementById('rawMethodInput');
+      const rawParamsInput = document.getElementById('rawParamsInput');
+
+      const handlers = {};
+
+      aminoDocInput.value = JSON.stringify(
+        {
+          chain_id: 'lbe-1',
+          account_number: '0',
+          sequence: '0',
+          fee: { amount: [], gas: '200000' },
+          msgs: [],
+          memo: 'LBE Wallet test signAmino'
+        },
+        null,
+        2
+      );
+
+      rawParamsInput.value = JSON.stringify(
+        {
+          chainId: 'lbe-1',
+          chainName: 'LBE',
+          rpc: 'https://rpc.litbee.io',
+          rest: 'https://api.litbee.io',
+          stakeCurrency: {
+            coinDenom: 'LBE',
+            coinMinimalDenom: 'ulbe',
+            coinDecimals: 18
+          },
+          bip44: {
+            coinType: 118
+          },
+          bech32Config: {
+            bech32PrefixAccAddr: 'cosmos',
+            bech32PrefixAccPub: 'cosmospub',
+            bech32PrefixValAddr: 'cosmosvaloper',
+            bech32PrefixValPub: 'cosmosvaloperpub',
+            bech32PrefixConsAddr: 'cosmosvalcons',
+            bech32PrefixConsPub: 'cosmosvalconspub'
+          },
+          currencies: [
+            {
+              coinDenom: 'LBE',
+              coinMinimalDenom: 'ulbe',
+              coinDecimals: 18
+            },
+            {
+              coinDenom: 'ZDB',
+              coinMinimalDenom: 'ZDB',
+              coinDecimals: 18
+            }
+          ],
+          feeCurrencies: [
+            {
+              coinDenom: 'LBE',
+              coinMinimalDenom: 'ulbe',
+              coinDecimals: 18,
+              gasPriceStep: {
+                low: 0.01,
+                average: 0.025,
+                high: 0.03
+              }
+            }
+          ],
+          features: ['stargate', 'ibc-transfer']
+        },
+        null,
+        2
+      );
+
+      signOptionsInput.value = JSON.stringify(
+        {
+          preferNoSetFee: true,
+          preferNoSetMemo: true
+        },
+        null,
+        2
+      );
+
+      function now() {
+        return new Date().toLocaleTimeString();
+      }
+
+      function toDisplay(value) {
+        if (value instanceof Uint8Array) {
+          return { type: 'Uint8Array', data: Array.from(value) };
+        }
+        return value;
+      }
+
+      function replacer(_key, value) {
+        if (value instanceof Uint8Array) return toDisplay(value);
+        return value;
+      }
+
+      function log(title, payload) {
+        const line = `[${now()}] ${title}`;
+        const body = payload === undefined ? '' : `\n${JSON.stringify(toDisplay(payload), replacer, 2)}`;
+        logEl.textContent = `${line}${body}\n\n${logEl.textContent}`;
+      }
+
+      function setStatus(ready) {
+        statusDot.classList.toggle('ok', ready);
+        statusText.textContent = ready ? 'window.lbeWallet injected and ready' : 'Waiting for wallet injection...';
+      }
+
+      function getProvider() {
+        const provider = window.lbeWallet;
+        if (!provider) {
+          throw new Error('window.lbeWallet not found. Ensure extension is installed and page is allowed.');
+        }
+        return provider;
+      }
+
+      function parseChainIds() {
+        return chainIdsInput.value
+          .split(',')
+          .map((item) => item.trim())
+          .filter(Boolean);
+      }
+
+      function parseJSONInput(el, fieldName) {
+        try {
+          return JSON.parse(el.value || '{}');
+        } catch (error) {
+          throw new Error(`${fieldName} JSON parse failed: ${error.message}`);
+        }
+      }
+
+      async function execute(label, fn) {
+        try {
+          const result = await fn();
+          log(`${label} -> success`, result);
+        } catch (error) {
+          log(`${label} -> error`, {
+            message: error?.message || String(error),
+            code: error?.code,
+            data: error?.data
+          });
+        }
+      }
+
+      function bindEvents() {
+        const provider = getProvider();
+        if (handlers.accountsChanged) {
+          log('bindEvents skipped', { reason: 'already bound' });
+          return;
+        }
+
+        handlers.accountsChanged = (accounts) => log('event: accountsChanged', accounts);
+        handlers.chainChanged = (chainId) => log('event: chainChanged', chainId);
+        handlers.connect = (info) => log('event: connect', info);
+        handlers.networkChanged = (networkVersion) => log('event: networkChanged', networkVersion);
+        handlers.disabled = (payload) => log('event: disabled', payload);
+
+        provider.on('accountsChanged', handlers.accountsChanged);
+        provider.on('chainChanged', handlers.chainChanged);
+        provider.on('connect', handlers.connect);
+        provider.on('networkChanged', handlers.networkChanged);
+        provider.on('disabled', handlers.disabled);
+
+        log('bindEvents -> success');
+      }
+
+      function unbindEvents() {
+        const provider = getProvider();
+        for (const [event, fn] of Object.entries(handlers)) {
+          if (!fn) continue;
+          provider.off(event, fn);
+          delete handlers[event];
+        }
+        log('unbindEvents -> success');
+      }
+
+      function setupActions() {
+        document.getElementById('enableBtn').onclick = () =>
+          execute('enable(chainIds)', async () => {
+            const chainIds = parseChainIds();
+            if (!chainIds.length) {
+              throw new Error('Please input at least one chainId.');
+            }
+            return getProvider().enable(chainIds);
+          });
+
+        document.getElementById('getChainInfosBtn').onclick = () => execute('getChainInfos()', () => getProvider().getChainInfos());
+        document.getElementById('disconnectBtn').onclick = () => execute('disable()', () => getProvider().disable());
+
+        document.getElementById('getKeyBtn').onclick = () =>
+          execute('getKey(chainId)', () => getProvider().getKey(singleChainIdInput.value.trim()));
+
+        document.getElementById('getAccountsBtn').onclick = () =>
+          execute('getOfflineSigner(chainId).getAccounts()', async () => {
+            const signer = window.getOfflineSigner(singleChainIdInput.value.trim());
+            return signer.getAccounts();
+          });
+
+        document.getElementById('signAminoBtn').onclick = () =>
+          execute('signAmino(chainId, signer, signDoc)', () => {
+            const chainId = singleChainIdInput.value.trim();
+            const signer = signerInput.value.trim();
+            const signDoc = parseJSONInput(aminoDocInput, 'Amino signDoc');
+            const signOptions = parseJSONInput(signOptionsInput, 'signOptions');
+            return getProvider().signAmino(chainId, signer, signDoc, signOptions);
+          });
+
+        document.getElementById('signDirectBtn').onclick = () =>
+          execute('signDirect(chainId, signer, signDoc)', () => {
+            const chainId = singleChainIdInput.value.trim();
+            const signer = signerInput.value.trim();
+            const signDoc = parseJSONInput(aminoDocInput, 'Direct signDoc');
+            const signOptions = parseJSONInput(signOptionsInput, 'signOptions');
+            return getProvider().signDirect(chainId, signer, signDoc, signOptions);
+          });
+
+        document.getElementById('offlineSignAminoBtn').onclick = () =>
+          execute('getOfflineSigner(chainId).signAmino(...)', () => {
+            const chainId = singleChainIdInput.value.trim();
+            const signer = signerInput.value.trim();
+            const signDoc = parseJSONInput(aminoDocInput, 'Amino signDoc');
+            const signOptions = parseJSONInput(signOptionsInput, 'signOptions');
+            return window.getOfflineSigner(chainId).signAmino(signer, signDoc, signOptions);
+          });
+
+        document.getElementById('offlineSignDirectBtn').onclick = () =>
+          execute('getOfflineSigner(chainId).signDirect(...)', () => {
+            const chainId = singleChainIdInput.value.trim();
+            const signer = signerInput.value.trim();
+            const signDoc = parseJSONInput(aminoDocInput, 'Direct signDoc');
+            const signOptions = parseJSONInput(signOptionsInput, 'signOptions');
+            return window.getOfflineSigner(chainId).signDirect(signer, signDoc, signOptions);
+          });
+
+        document.getElementById('rawRequestBtn').onclick = () =>
+          execute('request({ method, params })', () => {
+            const method = rawMethodInput.value.trim();
+            const rawParams = parseJSONInput(rawParamsInput, 'Raw params');
+
+            const params =
+              method === 'suggestChain' && rawParams.chainId && !rawParams.chainInfo
+                ? { chainInfo: rawParams }
+                : rawParams;
+
+            return getProvider().request({ method, params });
+          });
+
+        document.getElementById('suggestChainBtn').onclick = () =>
+          execute('suggestChain(chainInfo)', () => {
+            const chainInfo = parseJSONInput(rawParamsInput, 'chainInfo');
+            return getProvider().suggestChain(chainInfo);
+          });
+
+        document.getElementById('bindEventsBtn').onclick = () => {
+          try {
+            bindEvents();
+          } catch (error) {
+            log('bindEvents -> error', { message: error.message });
+          }
+        };
+
+        document.getElementById('unbindEventsBtn').onclick = () => {
+          try {
+            unbindEvents();
+          } catch (error) {
+            log('unbindEvents -> error', { message: error.message });
+          }
+        };
+
+        document.getElementById('clearLogBtn').onclick = () => {
+          logEl.textContent = '';
+        };
+      }
+
+      function waitForProvider(timeoutMs = 7000) {
+        return new Promise((resolve) => {
+          if (window.lbeWallet) {
+            resolve(true);
+            return;
+          }
+
+          const timeout = setTimeout(() => {
+            window.removeEventListener('lbeWallet#initialized', onInitialized);
+            resolve(Boolean(window.lbeWallet));
+          }, timeoutMs);
+
+          function onInitialized() {
+            clearTimeout(timeout);
+            window.removeEventListener('lbeWallet#initialized', onInitialized);
+            resolve(Boolean(window.lbeWallet));
+          }
+
+          window.addEventListener('lbeWallet#initialized', onInitialized);
+        });
+      }
+
+      (async () => {
+        setupActions();
+        const ready = await waitForProvider();
+        setStatus(ready);
+
+        if (ready) {
+          log('provider', { isLbeWallet: window.lbeWallet.isLbeWallet, available: Object.keys(window.lbeWallet || {}) });
+        } else {
+          log('provider not found', {
+            hint: 'Open this page on http(s) and ensure the extension is installed and enabled for this site.'
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

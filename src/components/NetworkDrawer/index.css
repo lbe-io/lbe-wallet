@@ -1,0 +1,9 @@
+.network-drawer-search-row {
+  padding-inline: var(--space-16);
+  height: 64px;
+}
+
+.network-drawer-list {
+  height: calc(100% - 64px);
+  overflow-y: auto;
+}

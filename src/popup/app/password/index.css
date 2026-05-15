@@ -1,0 +1,56 @@
+.password-page-shell {
+  height: calc(100vh - 75px);
+  padding: 59px 30px 16px;
+  overflow: hidden;
+}
+
+.password-page-hero-image {
+  width: 180px;
+  height: 180px;
+}
+
+.password-page-title {
+  text-align: center;
+}
+
+.password-page-form {
+  width: 100%;
+  height: 100%;
+  margin-top: 20px;
+}
+
+.password-page-form-layout {
+  width: 100%;
+  height: 100%;
+}
+
+.password-modal-content {
+  padding: 36px 6px 16px;
+}
+
+.password-modal-copy-block {
+  margin-bottom: 24px;
+}
+
+.password-modal-copy {
+  font-size: var(--font-size-lg);
+  line-height: 24px;
+  color: var(--color-text-secondary);
+}
+
+.password-modal-action-group {
+  width: 100%;
+}
+
+.password-error-modal-content {
+  padding: 0 6px 16px;
+}
+
+.password-error-modal-header-row {
+  width: 100%;
+}
+
+.password-error-modal-image {
+  width: 64px;
+  height: 64px;
+}

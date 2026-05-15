@@ -1,0 +1,35 @@
+@import '../../styles/tokens.css';
+@import '../../styles/components.css';
+@import '../../styles/third-party-overrides.css';
+
+body {
+  margin: 0;
+  padding: 0;
+}
+::-webkit-scrollbar {
+  background: transparent;
+  width: 0px;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-clip: content-box;
+  background-color: transparent;
+}
+
+@keyframes lbe-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

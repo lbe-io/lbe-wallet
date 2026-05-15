@@ -1,0 +1,49 @@
+.wallet-edit-shell {
+  border-top: none;
+}
+
+.wallet-edit-search-row {
+  padding-inline: var(--space-16);
+  height: var(--control-height-lg);
+}
+
+.wallet-edit-collapse-scroll {
+  height: calc(100% - 192px);
+  overflow-y: auto;
+}
+
+.wallet-edit-collapse {
+  background-color: transparent;
+}
+
+.wallet-edit-expand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(0deg);
+  transition: transform 0.2s ease;
+}
+
+.wallet-edit-expand-icon-active {
+  transform: rotate(180deg);
+}
+
+.wallet-edit-collapse-label {
+  width: 100%;
+  flex: 1;
+}
+
+.wallet-edit-action-row {
+  padding: var(--space-16);
+}
+
+.wallet-edit-modal-actions {
+  padding: 20px 0 16px;
+  margin-inline: -15px;
+}
+
+.wallet-edit-modal-text {
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  color: var(--color-info);
+}

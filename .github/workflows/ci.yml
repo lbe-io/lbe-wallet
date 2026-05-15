@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Type check
+        run: corepack yarn compile
+
+      - name: Verify Stage2 Contracts
+        run: corepack yarn verify:stage2
+
+      - name: Verify CSS Color Tokens
+        run: corepack yarn verify:css:colors
+
+      - name: Verify i18n Consistency
+        run: corepack yarn verify:i18n
+
+      - name: Build
+        run: corepack yarn build

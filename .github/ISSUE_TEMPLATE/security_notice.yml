@@ -1,0 +1,16 @@
+name: Security notice
+description: Read before reporting potential vulnerabilities
+title: "[Security]: "
+labels:
+  - security
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not submit security vulnerabilities in public issues.
+
+        Please report privately using one of the channels in SECURITY.md:
+        - GitHub private vulnerability report (preferred)
+        - tech@litbee.io
+
+        Public issues containing sensitive vulnerability details may be closed without discussion.

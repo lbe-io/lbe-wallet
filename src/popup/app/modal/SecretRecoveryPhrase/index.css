@@ -1,0 +1,17 @@
+.secret-recovery-modal-content {
+  padding: var(--space-20) 6px var(--space-16);
+}
+
+.secret-recovery-modal-title {
+  text-align: center;
+}
+
+.secret-recovery-modal-list {
+  padding-left: var(--space-20);
+  margin: 0;
+}
+
+.secret-recovery-modal-confirm-btn {
+  height: var(--control-height-xl);
+  font-weight: 600;
+}

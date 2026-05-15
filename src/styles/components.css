@@ -1,0 +1,131 @@
+.ui-modal-shell {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-top: 0.5px solid var(--color-border-subtle);
+}
+
+.ui-fill-shell {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.ui-modal-search-row {
+  padding-inline: var(--space-16);
+  height: 64px;
+}
+
+.ui-modal-scroll-list {
+  height: calc(100%);
+  overflow-y: auto;
+}
+
+.ui-cta-pill {
+  border-radius: var(--radius-round);
+}
+
+.ui-token-avatar-36 {
+  min-width: 36px;
+}
+
+.ui-content-inset-16 {
+  width: calc(100% - 32px);
+}
+
+.ui-text-xs-secondary {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.ui-text-xs-primary {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+}
+
+.ui-text-md-primary {
+  font-size: var(--font-size-md);
+  color: var(--color-text-primary);
+}
+
+.ui-text-md-secondary {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+}
+
+.ui-text-13-primary {
+  font-size: var(--font-size-13);
+  color: var(--color-text-primary);
+}
+
+.ui-text-13-secondary {
+  font-size: var(--font-size-13);
+  color: var(--color-text-secondary);
+}
+
+.ui-text-md-secondary-tight {
+  font-size: var(--font-size-md);
+  line-height: 21px;
+  color: var(--color-text-secondary);
+}
+
+.ui-text-sm-primary-body {
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+  color: var(--color-text-primary);
+}
+
+.ui-text-sm-secondary-body {
+  font-size: var(--font-size-sm);
+  line-height: 20px;
+  color: var(--color-text-secondary);
+}
+
+.ui-text-xs-tertiary {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.ui-text-sm-tertiary {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+.ui-text-sm-danger {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+}
+
+.ui-title-center-lg {
+  flex-grow: 1;
+  text-align: center;
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.ui-title-lg-primary-medium {
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.ui-label-sm-primary-medium {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.ui-label-sm-emphasis-medium {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-emphasis);
+}
+
+.ui-recovery-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg-overlay-soft);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-light);
+}

@@ -1,0 +1,24 @@
+.welcome-page {
+  max-width: 446px;
+  min-height: 627px;
+  height: auto;
+  padding: 104px 26px 24px;
+  margin-inline: auto;
+  box-sizing: border-box;
+}
+
+.welcome-page-image {
+  width: 180px;
+  height: 180px;
+}
+
+.welcome-page-title {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 36px;
+}
+
+.welcome-page-actions {
+  width: 100%;
+}

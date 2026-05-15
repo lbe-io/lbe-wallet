@@ -1,0 +1,58 @@
+.send-info-content {
+  height: calc(100% - 148px);
+  overflow-y: auto;
+}
+
+.send-info-asset-row {
+  height: 84px;
+  padding-inline: var(--space-16);
+}
+
+.send-info-token-avatar--fallback {
+  background-color: var(--color-text-primary);
+}
+
+.send-info-amount {
+  margin-left: var(--space-8);
+}
+
+.send-info-amount-value {
+  font-size: 32px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.send-info-address-block {
+  height: 180px;
+  width: 100%;
+  padding-block: 24px;
+  border-top: 0.5px solid var(--color-border-subtle);
+  border-bottom: 0.5px solid var(--color-border-subtle);
+}
+
+.send-info-address-row {
+  height: 78px;
+  padding-inline: var(--space-16);
+}
+
+.send-info-address-column {
+  height: 100%;
+}
+
+.send-info-owner-tag {
+  background-color: var(--color-bg-neutral);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  width: fit-content;
+}
+
+.send-info-gas-row {
+  padding: var(--space-16);
+}
+
+.send-info-confirm-btn {
+  margin: var(--space-16);
+}

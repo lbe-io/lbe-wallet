@@ -1,0 +1,271 @@
+.clickable-word {
+  color: var(--color-info);
+  cursor: pointer;
+  margin-inline: 5px;
+}
+
+.clickable-word:hover {
+  text-decoration: underline;
+}
+
+.phrase-full-width {
+  width: 100%;
+}
+
+.phrase-flex-fill {
+  width: 100%;
+  flex: 1;
+}
+
+.phrase-size-full {
+  width: 100%;
+  height: 100%;
+}
+
+.phrase-page-container {
+  width: calc(100% - 32px);
+  padding: 0 16px;
+}
+
+.phrase-mnemonic-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px 18px;
+}
+
+.phrase-body-text {
+  line-height: 21px;
+}
+
+.review-recovery {
+  width: 100%;
+  flex: 1;
+  margin-top: 22px;
+}
+
+.review-recovery .mnemonic-wrapper,
+.phrase-form-card {
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.review-recovery .mnemonic-wrapper {
+  width: 100%;
+  position: relative;
+  padding: var(--space-16);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.review-recovery .word-box {
+  background: var(--color-bg-base);
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  border: 0.5px solid var(--color-border-default);
+}
+.review-recovery .word-box.readonly {
+  background: var(--color-bg-neutral);
+  color: var(--color-text-disabled);
+  cursor: default;
+}
+.review-recovery .word-box.active {
+  border: 1px solid var(--color-info);
+  background: var(--color-info-soft);
+}
+
+.import-recovery {
+  min-height: 176px;
+}
+.import-recovery .mnemonic-item {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  background: var(--color-bg-base);
+  border-radius: var(--radius-md);
+  padding-left: 8px;
+  border: 1px solid var(--color-border-subtle);
+  transition: 0.2s;
+}
+.import-recovery .mnemonic-item.error {
+  border: 1px solid #cc2828;
+}
+.import-recovery .mnemonic-item.focused {
+  border: 1px solid var(--color-info);
+}
+
+.import-recovery .mnemonic-index {
+  width: 24px;
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  user-select: none;
+}
+
+.candidate-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== candidate words ===== */
+.candidate-btn {
+  flex: 0 0 calc((100% - 36px) / 3);
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1.2px solid var(--color-info);
+  color: var(--color-info);
+}
+
+.phrase-shell {
+  margin-top: 24px;
+}
+
+.phrase-form-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--space-16) var(--space-16) 0;
+}
+
+.phrase-form-card-grow {
+  flex: 1;
+}
+
+.phrase-input {
+  padding: 6px 8px 6px 4px;
+}
+
+.phrase-action-row {
+  margin-top: 16px;
+}
+
+.phrase-link-action {
+  font-size: var(--font-size-18);
+}
+
+.phrase-submit-row {
+  margin-bottom: 32px;
+}
+
+.phrase-error-text {
+  color: var(--color-danger);
+}
+
+.phrase-modal-content {
+  padding: 40px 6px 16px;
+}
+
+.phrase-fullscreen-container {
+  height: calc(100% - 40px);
+  overflow: auto;
+}
+
+.phrase-tip-row {
+  margin-bottom: 20px;
+}
+
+.phrase-tip-text {
+  line-height: 21px;
+}
+
+.phrase-body-layout {
+  width: 100%;
+  flex: 1;
+}
+
+.confirm-recovery-candidates {
+  row-gap: 12px;
+}
+
+.confirm-recovery-submit {
+  margin-top: 16px;
+}
+
+.reveal-recovery-container {
+  height: calc(100% - 84px);
+  overflow: hidden;
+  padding-bottom: 24px;
+}
+
+.reveal-recovery-form {
+  width: 100%;
+  height: calc(100vh - 84px);
+}
+
+.review-recovery-loading {
+  height: 100%;
+}
+
+.review-recovery .word-box.masked {
+  filter: blur(6px);
+}
+
+.review-recovery .word-box.revealed {
+  filter: none;
+}
+
+.review-recovery-overlay-title {
+  margin-top: 8px !important;
+}
+
+.review-recovery-actions {
+  width: 100%;
+}
+
+.review-recovery-warning-icon {
+  width: 60px;
+  height: 60px;
+}
+
+.review-recovery-warning-actions {
+  width: 100%;
+}
+
+.import-account-container {
+  height: calc(100% - 20px);
+}
+
+.import-account-description {
+  padding-bottom: 20px;
+}
+
+.import-account-text {
+  line-height: 21px;
+}
+
+.import-account-link {
+  color: var(--color-info);
+  line-height: 21px;
+  margin-inline: 5px;
+}
+
+.import-account-form {
+  width: 100%;
+  height: calc(100% - 188px);
+  padding-top: 16px;
+  padding-bottom: 32px;
+}
+
+.import-account-field {
+  width: 100%;
+}
+
+.import-account-field-label {
+  line-height: 21px;
+  padding-bottom: 10px;
+}
+
+.phrase-tip-row,
+.confirm-recovery-candidates,
+.review-recovery-actions,
+.review-recovery-warning-actions,
+.import-account-description,
+.import-account-field {
+  width: 100%;
+}
+
+.phrase-shell,
+.phrase-body-layout {
+  width: 100%;
+  flex: 1;
+}

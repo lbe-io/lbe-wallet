@@ -1,0 +1,136 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules
+node_modules/
+
+# Build / output
+dist/
+build/
+out/
+.output
+stats.html
+stats-*.json
+.wxt
+web-ext.config.ts
+
+# Chrome extension artifacts & keys
+chrome-extension-key.pem
+*.pem
+*.key
+extension/*_key.pem
+unpacked/
+packaged/
+.crx
+
+# TypeScript
+*.tsbuildinfo
+
+# Coverage
+coverage/
+
+# Cache & temp
+.cache/
+.cache-loader/
+.tmp/
+temp/
+tmp/
+
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+Thumbs.db
+ehthumbs.db
+.AppleDouble
+._*
+Desktop.ini
+
+# Environment / secret files
+.env
+.env.*.local
+.env.local
+
+# Local secret files
+secret
+secret.*
+secrets
+secrets.*
+*.secret
+*.secrets
+keystore.json
+
+# Certificates / keys
+*.p12
+*.jks
+*.cer
+*.crt
+*.der
+
+# Misc
+*.tgz
+*~
+.sass-cache/
+storybook-static/
+
+# Additional caches / CI / generated script outputs
+.nyc_output/
+.parcel-cache/
+.turbo/
+.next/
+.nuxt/
+.expo/
+.vercel/
+
+# pnpm / package manager caches
+.pnpm-debug.log*
+.pnpm-store/
+
+# Generated script fixtures / previews (build-time artifacts)
+scripts/approval-preview-*/
+scripts/.persisted-metadata-fixture-*/
+
+# local DB / development artifacts
+*.sqlite
+*.db
+*.db-journal
+
+# JetBrains caches
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+
+# Temporary e2e artifacts
+.tmp-e2e/
+
+# Match any file or directory with ".tmp-e2e" in its name
+*.tmp-e2e*
+
+AGENTS.md
+
+# Generated script temp directories (random suffix artifacts)
+scripts/approval-preview-*/
+scripts/.persisted-metadata-fixture-hardening-*/
+scripts/provider-controller-handlers-*/
+scripts/provider-approval-request-*/
+scripts/provider-flow-layers-*/
+scripts/keyring-signing-layers-*/
+scripts/provider-connection-chain-*/
+scripts/provider-method-meta-*/
+scripts/keyring-signer-material-*/
+scripts/keyring-keystore-access-*/
+scripts/keyring-keystore-write-access-*/
+scripts/keyring-session-state-*/

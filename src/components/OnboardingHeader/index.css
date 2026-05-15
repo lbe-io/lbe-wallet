@@ -1,0 +1,42 @@
+.onboarding-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 34px;
+  border-bottom: 1px solid var(--color-border-overlay);
+}
+
+.onboarding-header-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.onboarding-header-logo {
+  width: 30px;
+  height: 30px;
+}
+
+
+.onboarding-header-brand-text {
+  font-size: 32px;
+  line-height: 1.5;
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.4px;
+}
+
+.onboarding-header-lang {
+  width: 170px;
+}
+
+@media (max-width: 1100px) {
+  .onboarding-header-brand-text {
+    font-size: 22px;
+  }
+
+  .onboarding-header-lang {
+    width: 140px;
+  }
+}

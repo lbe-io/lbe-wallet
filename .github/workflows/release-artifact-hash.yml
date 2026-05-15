@@ -1,0 +1,60 @@
+name: Release Artifact Hash
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-hash:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Build extension
+        run: corepack yarn build
+
+      - name: Package extension
+        run: corepack yarn zip
+
+      - name: Generate SHA256 hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          mkdir -p release-artifacts
+          files=(.output/*.zip)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No zip artifact found under .output/"
+            exit 1
+          fi
+          sha256sum "${files[@]}" | tee release-artifacts/SHA256SUMS.txt
+
+      - name: Upload artifact zips
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-zips-${{ github.ref_name }}
+          path: .output/*.zip
+          if-no-files-found: error
+
+      - name: Upload SHA256 summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: sha256-${{ github.ref_name }}
+          path: release-artifacts/SHA256SUMS.txt
+          if-no-files-found: error

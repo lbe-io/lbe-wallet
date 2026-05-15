@@ -1,0 +1,126 @@
+.approval-shell {
+  height: 100vh;
+  width: 100%;
+}
+
+.approval-header {
+  height: 60px;
+  width: 100%;
+  border-bottom: 0.5px solid var(--color-border-subtle);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+}
+
+.approval-body-scroll {
+  height: calc(100vh - 170px);
+  width: calc(100% - 32px);
+  overflow: auto;
+  padding: var(--space-16);
+}
+
+.approval-source-card {
+  width: 100%;
+  padding: var(--space-16);
+  border-bottom: 0.5px solid var(--color-border-subtle);
+}
+
+.approval-row-full {
+  width: 100%;
+}
+
+.approval-value {
+  word-break: break-all;
+}
+
+.approval-value-with-gap {
+  margin-bottom: 16px;
+}
+
+.approval-break-all {
+  word-break: break-all;
+}
+
+.approval-session-name {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.approval-session-origin {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.approval-avatar-sm {
+  min-width: 32px;
+}
+
+.approval-avatar-fallback {
+  background-color: var(--color-ink);
+}
+
+.approval-right-icon {
+  color: var(--color-text-tertiary);
+}
+
+.approval-wallet-tag {
+  margin-top: 8px;
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface-soft);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.approval-connect-card {
+  width: 100%;
+  padding: 16px;
+  flex: 1 1 auto;
+  transition: opacity 0.2s ease;
+}
+
+.approval-connect-card-ready {
+  opacity: 1;
+  cursor: default;
+}
+
+.approval-connect-card-disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.approval-info-col {
+  min-width: 0;
+}
+
+.approval-json-preview {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--color-bg-surface-soft);
+  padding: 12px;
+  border-radius: var(--radius-md);
+}
+
+.approval-footer {
+  width: 100%;
+  padding: var(--space-16);
+  border-top: 0.5px solid var(--color-border-subtle);
+}
+
+.approval-warning-row {
+  width: 100%;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.approval-source-card,
+.approval-connect-card,
+.approval-footer {
+  box-sizing: border-box;
+}

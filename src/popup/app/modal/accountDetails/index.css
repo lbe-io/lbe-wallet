@@ -1,0 +1,12 @@
+.account-details-header {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-24);
+}
+
+.account-details-loading-wrap {
+  height: 220px;
+}
+
+.account-details-item-list {
+  height: 272px;
+}

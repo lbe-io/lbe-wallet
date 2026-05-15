@@ -1,0 +1,15 @@
+.rename-modal-content {
+  padding-top: var(--space-20);
+}
+
+.rename-modal-input {
+  height: var(--control-height-lg);
+  border-radius: var(--radius-card);
+  font-size: var(--font-size-lg);
+  padding-inline: 14px;
+}
+
+.rename-modal-confirm-btn {
+  height: var(--control-height-lg);
+  border-radius: var(--radius-round);
+}

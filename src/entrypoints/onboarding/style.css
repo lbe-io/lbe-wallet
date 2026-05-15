@@ -1,0 +1,12 @@
+html,
+body,
+#onboardingroot {
+  margin: 0;
+  width: 100%;
+  min-height: 728px;
+}
+
+body {
+  font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  background: radial-gradient(circle at 20% 20%, var(--color-bg-accent-subtle), var(--color-bg-surface-soft) 45%, var(--color-info-emphasis-soft) 100%);
+}

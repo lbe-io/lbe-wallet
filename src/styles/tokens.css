@@ -1,0 +1,78 @@
+:root {
+  /* Brand / Info */
+  --color-brand-primary: #2563eb;
+  --color-brand-soft: rgba(37, 99, 235, 0.14);
+  --color-info: #0067fd;
+  --color-info-emphasis: #4f46e5;
+  --color-info-soft: #e6f4ff;
+  --color-info-emphasis-soft: #eef2ff;
+
+  /* Text / Ink */
+  --color-text-primary: #010101;
+  --color-text-emphasis: #131722;
+  --color-text-secondary: #86909c;
+  --color-text-support: #475569;
+  --color-text-tertiary: #8d95a9;
+  --color-text-disabled: #999999;
+  --color-ink: #000000;
+
+  /* Background */
+  --color-bg-base: #ffffff;
+  --color-bg-subtle: #f6f7f9;
+  --color-bg-panel: #f9f9f9;
+  --color-bg-surface: #f4f4f7;
+  --color-bg-neutral: #f3f3f3;
+  --color-bg-surface-soft: #f8fafc;
+  --color-bg-accent-subtle: #d7e5fa;
+  --color-bg-accent-soft: #eff4fb;
+  --color-bg-overlay-soft: rgba(255, 255, 255, 0.6);
+
+  /* Border / Overlay */
+  --color-border-subtle: #e0e3ec;
+  --color-border-default: #b3b3b3;
+  --color-border-light: #d1d1d1;
+  --color-border-overlay: rgba(25, 25, 25, 0.2);
+  --color-overlay-dark: rgba(17, 24, 39, 0.5);
+
+  /* Status */
+  --color-danger: #cc2828;
+  --color-danger-emphasis: #f53f3f;
+  --color-danger-soft: rgba(224, 44, 44, 0.08);
+  --color-success: #22c55e;
+  --color-success-emphasis: #00b42a;
+  --color-warning: #ff7d00;
+
+  /* Radius scale */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-card: 12px;
+  --radius-xl: 20px;
+  --radius-pill: 100px;
+  --radius-round: 999px;
+
+  /* Spacing scale */
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+
+  /* Typography scale */
+  --font-size-xs: 12px;
+  --font-size-13: 13px;
+  --font-size-sm: 14px;
+  --font-size-md: 15px;
+  --font-size-lg: 16px;
+  --font-size-18: 18px;
+  --font-size-xl: 20px;
+  --line-height-lg: 22px;
+
+  /* Control sizes */
+  --control-height-sm: 40px;
+  --control-height-md: 44px;
+  --control-height-lg: 48px;
+  --control-height-xl: 52px;
+  --control-height-xxl: 56px;
+}

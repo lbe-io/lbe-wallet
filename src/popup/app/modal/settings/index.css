@@ -1,0 +1,5 @@
+.settings-modal-root {}
+
+.settings-modal-content {
+  padding: var(--space-16);
+}

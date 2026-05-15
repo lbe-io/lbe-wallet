@@ -1,0 +1,138 @@
+.crypto-detail {
+  width: calc(100%);
+  height: calc(100%);
+  border-top: 0.5px solid var(--color-border-subtle);
+  position: relative;
+}
+
+.crypto-detail-title-avatar {
+  min-width: 24px;
+}
+
+.crypto-detail-title-avatar-fallback {
+  background-color: var(--color-text-primary);
+}
+
+.crypto-detail-title-symbol {
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  margin-left: var(--space-8);
+}
+
+.crypto-detail-tabs {
+  height: 45px;
+}
+
+.crypto-detail-content {
+  padding-inline: var(--space-16);
+  overflow: auto;
+}
+
+.crypto-detail-content-with-tabs {
+  height: calc(100% - 181px);
+}
+
+.crypto-detail-content-no-tabs {
+  height: calc(100% - 117px);
+}
+
+.crypto-detail-balance-panel {
+  padding-inline: var(--space-16);
+  height: 112px;
+}
+
+.crypto-detail-usd-row {
+  cursor: pointer;
+}
+
+.crypto-detail-usd-prefix {
+}
+
+.crypto-detail-action-btn {
+  height: var(--control-height-lg);
+  width: 50px !important;
+}
+
+.crypto-detail-address-card {
+  margin: 24px 0;
+  background: var(--color-bg-panel);
+  height: 64px;
+  border-radius: var(--radius-md);
+  padding: var(--space-16);
+}
+
+.crypto-detail-address-label {
+  color: var(--color-text-tertiary);
+}
+
+.crypto-detail-address-value {
+}
+
+.crypto-detail-history-block {
+  height: 107px;
+  padding-bottom: 27px;
+}
+
+.crypto-detail-history-title {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+}
+
+.crypto-detail-history-date {
+}
+
+.crypto-detail-history-icon-wrap {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  background: var(--color-bg-surface);
+  border-radius: 53px;
+}
+
+.crypto-detail-history-type {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+}
+
+.crypto-detail-history-counterparty {
+  word-break: break-all;
+}
+
+.crypto-detail-history-amount {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  word-break: keep-all;
+}
+
+.crypto-detail-footer-spacer {
+  height: 56px;
+}
+
+.crypto-detail-footer {
+  height: 56px;
+  position: fixed;
+  bottom: 0;
+  border-top: 0.5px solid var(--color-border-subtle);
+  padding-inline: var(--space-16);
+  background: var(--color-bg-base);
+}
+
+.crypto-detail-footer-label,
+.crypto-detail-footer-price,
+.crypto-detail-footer-change {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+}
+
+.crypto-detail-price-change-neutral {
+  color: var(--color-text-secondary);
+}
+
+.crypto-detail-price-change-positive {
+  color: var(--color-success);
+}
+
+.crypto-detail-price-change-negative {
+  color: var(--color-danger);
+}

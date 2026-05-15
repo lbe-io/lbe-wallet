@@ -1,0 +1,28 @@
+.full-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 600px;
+  background-color: var(--color-overlay-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.full-screen-shell {
+  background-color: var(--color-bg-base);
+  width: 400px;
+  height: 600px;
+}
+
+.full-screen-header {
+  padding-inline: 8px;
+  height: 60px;
+  width: 100%;
+}
+
+.full-screen-header-placeholder {
+  width: 48px;
+}

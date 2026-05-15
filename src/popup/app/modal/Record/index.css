@@ -1,0 +1,31 @@
+.record-filter-bar {
+  height: 42px;
+  padding-inline: var(--space-16);
+  border-bottom: 0.5px solid var(--color-border-subtle);
+}
+
+.record-network-trigger {
+  cursor: pointer;
+}
+
+.record-chain-avatar {
+  min-width: 16px;
+  background-color: var(--color-ink);
+}
+
+.record-chain-avatar.record-chain-avatar-with-icon {
+  background-color: unset;
+}
+
+.record-list {
+  height: calc(100% - 103px);
+  overflow-y: auto;
+}
+
+.record-group-title {
+  color: var(--color-text-secondary);
+  padding-left: var(--space-16);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  line-height: 36px;
+}

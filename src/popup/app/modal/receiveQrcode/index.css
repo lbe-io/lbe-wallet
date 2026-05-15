@@ -1,0 +1,64 @@
+.receive-qrcode-body {
+  width: calc(100% - 32px);
+  height: calc(100% - 74px);
+  padding-inline: var(--space-16);
+  padding-bottom: 14px;
+  background-color: var(--color-bg-panel);
+}
+
+.receive-qrcode-body-layout {
+  height: 100%;
+}
+
+.receive-qrcode-panel {
+  height: 404px;
+  padding: var(--space-16) var(--space-24);
+  border-radius: var(--radius-xl);
+  background-color: var(--color-bg-base);
+}
+
+.receive-qrcode-header {
+  height: 124px;
+  border-radius: var(--radius-xl);
+  background-color: var(--color-bg-base);
+}
+
+.receive-qrcode-chain-avatar {
+  min-width: 36px;
+  background-color: var(--color-ink);
+}
+
+.receive-qrcode-chain-meta {
+  margin-left: var(--space-8);
+}
+
+.receive-qrcode-chain-title {
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+}
+
+.receive-qrcode-address {
+  max-width: 210px;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+}
+
+.receive-qrcode-divider {
+  margin: var(--space-4) 0;
+}
+
+.receive-qrcode-warning {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  text-align: center;
+}
+
+.receive-qrcode-canvas-wrap {
+  width: 260px;
+  height: 260px;
+  padding: var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-panel);
+}

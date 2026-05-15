@@ -1,0 +1,35 @@
+.select-address-main {
+  height: 100%;
+}
+
+.select-address-form-wrapper {
+  padding-top: 24px;
+  height: 100%;
+}
+
+.select-address-form {
+  width: 100%;
+  height: 100%;
+}
+
+.select-address-input-item {
+  padding-inline: var(--space-16);
+}
+
+.select-address-input {
+  height: 42px;
+  border-radius: 39px;
+}
+
+.select-address-collapse-scroll {
+  height: calc(100% - 240px);
+  overflow-y: auto;
+}
+
+.select-address-collapse {
+  background-color: transparent;
+}
+
+.select-address-submit-btn {
+  margin: var(--space-16);
+}

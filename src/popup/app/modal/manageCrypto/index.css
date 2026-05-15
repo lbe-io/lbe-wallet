@@ -1,0 +1,43 @@
+.custom-crypto {
+  transition: background-color 0.3s;
+  padding-inline: var(--space-16);
+  height: var(--control-height-lg);
+  cursor: pointer;
+}
+
+.custom-crypto:hover {
+  background-color: var(--color-bg-subtle);
+}
+
+.manage-crypto-search-row {
+  padding-inline: var(--space-16);
+  height: 64px;
+}
+
+.manage-crypto-body {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.manage-crypto-custom-title {
+  font-weight: 500;
+  font-size: var(--font-size-lg);
+}
+
+.manage-crypto-list {
+  height: 430px;
+  overflow-y: auto;
+}
+
+.manage-crypto-empty-text {
+  text-align: center;
+  line-height: 40px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+.manage-crypto-section-label {
+  padding-left: var(--space-16);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}

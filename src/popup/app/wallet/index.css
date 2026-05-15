@@ -1,0 +1,124 @@
+.wallet-page-shell {
+  height: calc(100% - 24px);
+  padding-top: 24px;
+  width: 100%;
+}
+
+.wallet-page-header {
+  height: 40px;
+  width: 100%;
+}
+
+.wallet-page-header-left {
+  padding-left: 16px;
+}
+
+.wallet-page-wallet-trigger {
+  cursor: pointer;
+}
+
+.wallet-page-wallet-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+
+.wallet-page-account-name,
+.wallet-page-tool-title {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.wallet-page-header-right {
+  padding-right: 16px;
+}
+
+.wallet-page-settings-menu {
+  border: 1px solid var(--color-border-light);
+  box-shadow: 0 4px 8px 0 var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-8);
+  background-color: var(--color-bg-base);
+  width: 120px;
+}
+
+.wallet-page-settings-item {
+  justify-content: left;
+}
+
+.wallet-page-settings-divider {
+  margin: 6px 0;
+}
+
+.wallet-page-network-switch {
+  width: 40px;
+  height: 30px;
+  border-radius: 25px;
+  background: var(--color-border-subtle);
+  padding-inline: 8px;
+  cursor: pointer;
+}
+
+.wallet-page-network-avatar {
+  min-width: 24px;
+  font-size: var(--font-size-xs);
+}
+
+.wallet-page-network-avatar-fallback {
+  background-color: var(--color-ink);
+}
+
+.wallet-page-balance-block {
+  margin-top: 24px;
+  padding-inline: 16px;
+}
+
+.wallet-page-balance-prefix {
+  font-size: 32px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.wallet-page-balance-trend {
+  cursor: pointer;
+}
+
+.wallet-page-balance-trend-up {
+  font-weight: 400;
+}
+
+.wallet-page-balance-trend-label {
+  font-weight: 400;
+}
+
+.wallet-page-tool-row {
+  margin-top: 32px;
+  padding-inline: 16px;
+}
+
+.wallet-page-tool-item {
+  cursor: pointer;
+}
+
+.wallet-page-tool-btn {
+  height: 46px;
+  width: 46px !important;
+}
+
+.wallet-page-token-header {
+  height: 76px;
+  padding-inline: 16px;
+}
+
+.wallet-page-token-list {
+  height: calc(100% - 300px);
+  overflow: auto;
+  position: relative;
+}
+
+.wallet-page-token-list-spacer {
+  min-height: 68px;
+  width: 100%;
+}

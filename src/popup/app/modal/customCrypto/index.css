@@ -1,0 +1,52 @@
+.custom-crypto-network-avatar {
+  min-width: 24px;
+}
+
+.custom-crypto-network-meta {
+  margin-left: var(--space-8);
+}
+
+.custom-crypto-network-name {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: var(--color-text-primary);
+}
+
+.custom-crypto-body {
+  width: calc(100% - 32px);
+  height: calc(100% - 94px);
+  padding: var(--space-16);
+  border-top: 0.5px solid var(--color-border-subtle);
+  overflow: auto;
+}
+
+.custom-crypto-form {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.custom-crypto-form-item {
+  margin-bottom: var(--space-16);
+}
+
+.custom-crypto-select {
+  height: var(--control-height-lg);
+}
+
+.custom-crypto-decimals-input {
+  width: 100%;
+}
+
+.custom-crypto-submit-item {
+  margin-bottom: 0;
+}
+
+.custom-crypto-submit-btn {
+  width: 100%;
+  height: var(--control-height-xxl);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+}

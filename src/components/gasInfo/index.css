@@ -1,0 +1,48 @@
+.gas-info .fade-in-text {
+  opacity: 0;
+  animation: fadeIn 3s forwards;
+}
+
+.gas-info {
+  width: 100%;
+  cursor: pointer;
+}
+
+.gas-info-content {
+  height: 64px;
+  width: 100%;
+}
+
+.gas-info-avatar {
+  min-width: 16px;
+}
+
+.gas-info-avatar-fallback {
+  background-color: var(--color-ink);
+}
+
+.gas-info-title {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.gas-info-value {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+}
+
+.gas-info-divider {
+  color: var(--color-bg-subtle);
+}
+
+.gas-info-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-16);
+}
+
+.gas-info-arrow {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  padding-right: var(--space-8);
+}

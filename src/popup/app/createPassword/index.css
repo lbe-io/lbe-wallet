@@ -1,0 +1,63 @@
+.create-password-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  margin-top: 32px;
+}
+
+.create-password-form-layout {
+  flex: 1;
+  height: 100%;
+}
+
+.create-password-strength-wrap {
+  margin-bottom: 16px;
+  margin-top: -4px;
+}
+
+.create-password-strength-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.create-password-strength-bars {
+  width: 100px;
+}
+
+.create-password-strength-bar {
+  height: 3px;
+  flex: 1;
+  border-radius: var(--radius-round);
+  background: var(--color-border-subtle);
+}
+
+.create-password-strength-bar.is-active.tone-weak {
+  background: var(--color-danger-emphasis);
+}
+
+.create-password-strength-bar.is-active.tone-medium {
+  background: var(--color-warning);
+}
+
+.create-password-strength-bar.is-active.tone-strong {
+  background: var(--color-success-emphasis);
+}
+
+.create-password-strength-value {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+}
+
+.create-password-strength-value.tone-weak {
+  color: var(--color-danger-emphasis);
+}
+
+.create-password-strength-value.tone-medium {
+  color: var(--color-warning);
+}
+
+.create-password-strength-value.tone-strong {
+  color: var(--color-success-emphasis);
+}

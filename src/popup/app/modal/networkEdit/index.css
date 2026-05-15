@@ -1,0 +1,14 @@
+.network-edit-body {
+  height: calc(100% - 92px);
+  padding: var(--space-16);
+  overflow: auto;
+  border-top: 0.5px solid var(--color-border-subtle);
+}
+
+.network-edit-form-item {
+  margin-bottom: var(--space-16);
+}
+
+.network-edit-submit-item {
+  margin-bottom: 0;
+}

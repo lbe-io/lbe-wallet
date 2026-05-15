@@ -1,0 +1,27 @@
+.address-copy-body {}
+
+.address-copy-search {
+  height: 64px;
+  padding-inline: var(--space-16);
+}
+
+.address-copy-content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.address-copy-heading-row {
+  height: 32px;
+  padding-inline: var(--space-16);
+}
+
+.address-copy-heading {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-lg);
+  font-weight: 400;
+}
+
+.address-copy-list {
+  height: calc(100% - 156px);
+  overflow-y: auto;
+}

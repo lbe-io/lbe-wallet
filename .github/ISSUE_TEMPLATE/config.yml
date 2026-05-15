@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: mailto:tech@litbee.io
+    about: Use GitHub private vulnerability reporting or tech@litbee.io as documented in SECURITY.md.
