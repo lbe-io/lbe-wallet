@@ -209,6 +209,7 @@
           <div class="stack">
             <input id="signerInput" placeholder="signer address" />
             <textarea id="aminoDocInput" spellcheck="false"></textarea>
+            <textarea id="directDocInput" spellcheck="false"></textarea>
             <textarea id="signOptionsInput" spellcheck="false"></textarea>
             <div class="row">
               <button id="signAminoBtn">signAmino(chainId, signer, signDoc)</button>
@@ -259,6 +260,7 @@
       const singleChainIdInput = document.getElementById('singleChainIdInput');
       const signerInput = document.getElementById('signerInput');
       const aminoDocInput = document.getElementById('aminoDocInput');
+      const directDocInput = document.getElementById('directDocInput');
       const signOptionsInput = document.getElementById('signOptionsInput');
       const rawMethodInput = document.getElementById('rawMethodInput');
       const rawParamsInput = document.getElementById('rawParamsInput');
@@ -339,6 +341,17 @@
         2
       );
 
+      directDocInput.value = JSON.stringify(
+        {
+          chainId: 'lbe-1',
+          accountNumber: '0',
+          bodyBytes: [10, 0],
+          authInfoBytes: [10, 0]
+        },
+        null,
+        2
+      );
+
       function now() {
         return new Date().toLocaleTimeString();
       }
@@ -389,6 +402,132 @@
         }
       }
 
+      function toUint8Array(value, fieldName) {
+        if (value instanceof Uint8Array) {
+          return value;
+        }
+
+        if (Array.isArray(value)) {
+          const invalid = value.some((item) => !Number.isInteger(item) || item < 0 || item > 255);
+          if (invalid) {
+            throw new Error(`${fieldName} must be byte array values in range 0-255`);
+          }
+          return Uint8Array.from(value);
+        }
+
+        if (typeof value === 'string') {
+          const normalized = value.trim();
+          if (!normalized) {
+            return new Uint8Array();
+          }
+
+          const hexPayload = normalized.startsWith('0x') ? normalized.slice(2) : normalized;
+          if (/^[0-9a-fA-F]+$/.test(hexPayload) && hexPayload.length % 2 === 0) {
+            const bytes = new Uint8Array(hexPayload.length / 2);
+            for (let i = 0; i < hexPayload.length; i += 2) {
+              bytes[i / 2] = parseInt(hexPayload.slice(i, i + 2), 16);
+            }
+            return bytes;
+          }
+
+          try {
+            const decoded = atob(normalized);
+            return Uint8Array.from(decoded, (char) => char.charCodeAt(0));
+          } catch (_error) {
+            throw new Error(`${fieldName} string must be base64 or 0x-prefixed hex`);
+          }
+        }
+
+        if (value == null) {
+          return new Uint8Array();
+        }
+
+        throw new Error(`${fieldName} must be Uint8Array, number array, base64 string, or hex string`);
+      }
+
+      function toSafeAccountNumber(value) {
+        const raw = String(value ?? '0').trim();
+        if (!/^\d+$/.test(raw)) {
+          throw new Error('accountNumber must be a non-negative integer string');
+        }
+        const asNumber = Number(raw);
+        if (!Number.isSafeInteger(asNumber)) {
+          throw new Error('accountNumber is too large for this test page; please use a safe integer');
+        }
+        return asNumber;
+      }
+
+      function bytesToBase64(bytes) {
+        let binary = '';
+        for (const byte of bytes) {
+          binary += String.fromCharCode(byte);
+        }
+        return btoa(binary);
+      }
+
+      function normalizeTxBytesForProvider(value, fieldName) {
+        if (typeof value === 'string') {
+          const trimmed = value.trim();
+          if (!trimmed) {
+            throw new Error(`${fieldName} is empty`);
+          }
+          return trimmed;
+        }
+        const bytes = toUint8Array(value, fieldName);
+        if (!bytes.length) {
+          throw new Error(`${fieldName} is empty`);
+        }
+        return bytesToBase64(bytes);
+      }
+
+      function normalizeDirectSignDoc(rawSignDoc, fallbackChainId) {
+        const chainId = String(rawSignDoc?.chainId ?? rawSignDoc?.chain_id ?? fallbackChainId ?? '').trim();
+        if (!chainId) {
+          throw new Error('Direct sign doc is missing chainId');
+        }
+
+        const bodyBytes = normalizeTxBytesForProvider(rawSignDoc?.bodyBytes ?? rawSignDoc?.body_bytes, 'bodyBytes');
+        const authInfoBytes = normalizeTxBytesForProvider(rawSignDoc?.authInfoBytes ?? rawSignDoc?.auth_info_bytes, 'authInfoBytes');
+
+        return {
+          bodyBytes,
+          authInfoBytes,
+          chainId,
+          accountNumber: toSafeAccountNumber(rawSignDoc?.accountNumber ?? rawSignDoc?.account_number ?? '0')
+        };
+      }
+
+      function setSignerInputValue(address, source) {
+        const normalized = (address || '').trim();
+        if (!normalized) {
+          return;
+        }
+        if (signerInput.value.trim() === normalized) {
+          return;
+        }
+        signerInput.value = normalized;
+        log('signerInput auto-filled', { source, address: normalized });
+      }
+
+      function clearSignerInputValue(source) {
+        if (!signerInput.value.trim()) {
+          return;
+        }
+        signerInput.value = '';
+        log('signerInput cleared', { source });
+      }
+
+      async function syncSignerInputFromChainId(preferredChainId, source) {
+        const chainId = (preferredChainId || '').trim() || singleChainIdInput.value.trim() || parseChainIds()[0] || '';
+        if (!chainId) {
+          return;
+        }
+        const signer = window.getOfflineSigner(chainId);
+        const accounts = await signer.getAccounts();
+        const firstAddress = accounts?.[0]?.address || '';
+        setSignerInputValue(firstAddress, source);
+      }
+
       async function execute(label, fn) {
         try {
           const result = await fn();
@@ -409,11 +548,24 @@
           return;
         }
 
-        handlers.accountsChanged = (accounts) => log('event: accountsChanged', accounts);
+        handlers.accountsChanged = (accounts) => {
+          if (Array.isArray(accounts) && accounts[0]) {
+            setSignerInputValue(accounts[0], 'event.accountsChanged');
+          }
+          log('event: accountsChanged', accounts);
+        };
         handlers.chainChanged = (chainId) => log('event: chainChanged', chainId);
-        handlers.connect = (info) => log('event: connect', info);
+        handlers.connect = (info) => {
+          log('event: connect', info);
+          Promise.resolve(syncSignerInputFromChainId(singleChainIdInput.value.trim(), 'event.connect')).catch((error) => {
+            log('sync signer on connect -> error', { message: error?.message || String(error) });
+          });
+        };
         handlers.networkChanged = (networkVersion) => log('event: networkChanged', networkVersion);
-        handlers.disabled = (payload) => log('event: disabled', payload);
+        handlers.disabled = (payload) => {
+          clearSignerInputValue('event.disabled');
+          log('event: disabled', payload);
+        };
 
         provider.on('accountsChanged', handlers.accountsChanged);
         provider.on('chainChanged', handlers.chainChanged);
@@ -441,19 +593,32 @@
             if (!chainIds.length) {
               throw new Error('Please input at least one chainId.');
             }
-            return getProvider().enable(chainIds);
+            const result = await getProvider().enable(chainIds);
+            await syncSignerInputFromChainId(singleChainIdInput.value.trim() || chainIds[0], 'enable');
+            return result;
           });
 
         document.getElementById('getChainInfosBtn').onclick = () => execute('getChainInfos()', () => getProvider().getChainInfos());
-        document.getElementById('disconnectBtn').onclick = () => execute('disable()', () => getProvider().disable());
+        document.getElementById('disconnectBtn').onclick = () =>
+          execute('disable()', async () => {
+            const result = await getProvider().disable();
+            clearSignerInputValue('disable');
+            return result;
+          });
 
         document.getElementById('getKeyBtn').onclick = () =>
-          execute('getKey(chainId)', () => getProvider().getKey(singleChainIdInput.value.trim()));
+          execute('getKey(chainId)', async () => {
+            const key = await getProvider().getKey(singleChainIdInput.value.trim());
+            setSignerInputValue(key?.bech32Address || '', 'getKey');
+            return key;
+          });
 
         document.getElementById('getAccountsBtn').onclick = () =>
           execute('getOfflineSigner(chainId).getAccounts()', async () => {
             const signer = window.getOfflineSigner(singleChainIdInput.value.trim());
-            return signer.getAccounts();
+            const accounts = await signer.getAccounts();
+            setSignerInputValue(accounts?.[0]?.address || '', 'getAccounts');
+            return accounts;
           });
 
         document.getElementById('signAminoBtn').onclick = () =>
@@ -469,7 +634,7 @@
           execute('signDirect(chainId, signer, signDoc)', () => {
             const chainId = singleChainIdInput.value.trim();
             const signer = signerInput.value.trim();
-            const signDoc = parseJSONInput(aminoDocInput, 'Direct signDoc');
+            const signDoc = normalizeDirectSignDoc(parseJSONInput(directDocInput, 'Direct signDoc'), chainId);
             const signOptions = parseJSONInput(signOptionsInput, 'signOptions');
             return getProvider().signDirect(chainId, signer, signDoc, signOptions);
           });
@@ -487,7 +652,7 @@
           execute('getOfflineSigner(chainId).signDirect(...)', () => {
             const chainId = singleChainIdInput.value.trim();
             const signer = signerInput.value.trim();
-            const signDoc = parseJSONInput(aminoDocInput, 'Direct signDoc');
+            const signDoc = normalizeDirectSignDoc(parseJSONInput(directDocInput, 'Direct signDoc'), chainId);
             const signOptions = parseJSONInput(signOptionsInput, 'signOptions');
             return window.getOfflineSigner(chainId).signDirect(signer, signDoc, signOptions);
           });

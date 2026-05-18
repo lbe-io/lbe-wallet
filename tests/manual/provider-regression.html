@@ -496,6 +496,25 @@
           return key;
         };
 
+        const refreshLastSignerFromProvider = async (source) => {
+          const key = await getProvider().getKey(primaryChainId());
+          state.lastKey = key;
+          const signer = key?.bech32Address || key?.address || 'Unknown';
+          state.lastArbitrarySigner = signer === 'Unknown' ? null : signer;
+          lastSignerEl.textContent = signer;
+          appendLog('last signer refreshed', { source, signer });
+          return key;
+        };
+
+        const clearSignerState = (reason) => {
+          state.lastKey = null;
+          state.lastArbitrarySigner = null;
+          lastSignerEl.textContent = 'Not Available';
+          if (reason) {
+            appendLog('signer state cleared', reason);
+          }
+        };
+
         const buildAminoDoc = (signer, chainId) => ({
           chain_id: chainId,
           account_number: '0',
@@ -530,11 +549,48 @@
           }
           state.eventBound = true;
 
-          const events = ['connect', 'accountsChanged', 'chainChanged', 'networkChanged', 'disabled'];
-          events.forEach((eventName) => {
-            window.lbeWallet.on(eventName, (...args) => {
-              appendLog(`provider event: ${eventName}`, args);
+          window.lbeWallet.on('connect', (...args) => {
+            appendLog('provider event: connect', args);
+            Promise.resolve(refreshLastSignerFromProvider('provider event: connect')).catch((error) => {
+              appendLog(
+                'refresh signer on connect',
+                {
+                  message: error?.message || String(error),
+                  code: error?.code,
+                },
+                true,
+              );
             });
+          });
+
+          window.lbeWallet.on('accountsChanged', (...args) => {
+            const accounts = args?.[0];
+            if (Array.isArray(accounts) && accounts[0]) {
+              const address = String(accounts[0]);
+              state.lastKey = {
+                ...(state.lastKey || {}),
+                bech32Address: address,
+                address,
+              };
+              state.lastArbitrarySigner = address;
+              lastSignerEl.textContent = address;
+            } else {
+              clearSignerState('accountsChanged(empty)');
+            }
+            appendLog('provider event: accountsChanged', args);
+          });
+
+          window.lbeWallet.on('chainChanged', (...args) => {
+            appendLog('provider event: chainChanged', args);
+          });
+
+          window.lbeWallet.on('networkChanged', (...args) => {
+            appendLog('provider event: networkChanged', args);
+          });
+
+          window.lbeWallet.on('disabled', (...args) => {
+            clearSignerState('provider event: disabled');
+            appendLog('provider event: disabled', args);
           });
         };
 
@@ -614,11 +670,15 @@
           },
 
           async disablePrimary() {
-            return run('disable(primary)', () => getProvider().disable(primaryChainId()));
+            const result = await run('disable(primary)', () => getProvider().disable(primaryChainId()));
+            clearSignerState('disable(primary)');
+            return result;
           },
 
           async disableAll() {
-            return run('disable(all)', () => getProvider().disable());
+            const result = await run('disable(all)', () => getProvider().disable());
+            clearSignerState('disable(all)');
+            return result;
           },
 
           async getKey() {
