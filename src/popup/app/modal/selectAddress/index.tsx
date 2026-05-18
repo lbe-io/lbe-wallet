@@ -18,7 +18,7 @@ const SelectAddress: React.FC<SelectAddressModalProps> = ({ isOpen, onClose, tok
   return (
     <FullScreen title={t('page.send.address.title')} isOpen={isOpen} onClose={onClose}>
       {openSendAmount && <SendAmount {...sendAmountStep} isOpen={openSendAmount} onClose={closeNextStep} onSuccess={handleSendSuccess} />}
-      <div className="select-address ui-modal-shell select-address-shell">
+      <div className="ui-modal-shell">
         <div className="select-address-main">
           <Flex className="select-address-form-wrapper" align="flex-start">
             <Form className="select-address-form" onFinish={handleSubmit} form={form}>

@@ -20,6 +20,7 @@
     "verify:stage2": "yarn verify:stage2:compile && yarn verify:stage2:smoke && yarn verify:stage2:integration && yarn verify:stage2:stability",
     "verify:css:colors": "node scripts/verify-css-colors.mjs",
     "verify:i18n": "node scripts/verify-i18n.mjs",
+    "serve:manual": "node scripts/static-server.mjs",
     "verify:browser:e2e": "node tests/e2e/verify-browser-e2e-regression-baseline.mjs",
     "verify:browser:e2e:gating": "node tests/e2e/verify-browser-e2e-regression-gating.mjs",
     "verify:browser:e2e:gate": "yarn build && yarn verify:stage2 && yarn verify:browser:e2e",

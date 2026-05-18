@@ -10,6 +10,11 @@ export default defineContentScript({
   main: async () => {
     try {
       const channelName = nanoid();
+      const { BroadcastChannelMessage, PortMessage } = Message;
+      const pm = new PortMessage().connect(`provider:${channelName}`);
+      const bcm = new BroadcastChannelMessage(channelName).listen((data: unknown) => {
+        return pm.request(data);
+      });
 
       const container = document.head || document.documentElement;
       if (!container) {
@@ -29,13 +34,6 @@ export default defineContentScript({
       };
 
       container.insertBefore(scriptTag, container.firstChild);
-
-      const { BroadcastChannelMessage, PortMessage } = Message;
-      const pm = new PortMessage().connect(`provider:${channelName}`);
-
-      const bcm = new BroadcastChannelMessage(channelName).listen((data: unknown) => {
-        return pm.request(data);
-      });
 
       pm.on('message', (data) => {
         bcm.send('message', data);

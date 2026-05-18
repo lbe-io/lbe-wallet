@@ -50,6 +50,7 @@
   "page.connect.no.account": "未选择账户",
   "page.connect.reject": "拒绝",
   "page.connect.request.from": "请求来源",
+  "page.connect.select.accounts.title": "选择账户",
   "page.connect.title": "连接账户",
   "page.connect.wallet.not.found": "未找到钱包",
   "page.custom.token.address.label": "代币地址 / denom",

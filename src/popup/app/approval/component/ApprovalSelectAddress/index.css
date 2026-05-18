@@ -1,0 +1,28 @@
+.approval-select-address-shell {
+  height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+}
+
+.approval-select-address-collapse-scroll {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 60px;
+}
+
+.approval-select-address-collapse {
+  background-color: transparent;
+}
+
+.approval-select-address-group-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.approval-select-address-item-list {
+  overflow: hidden;
+  background-color: var(--color-bg-base);
+}

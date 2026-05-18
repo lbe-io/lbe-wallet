@@ -66,6 +66,10 @@
   color: var(--color-text-tertiary);
 }
 
+.approval-right-icon-clickable {
+  cursor: pointer;
+}
+
 .approval-wallet-tag {
   margin-top: 8px;
   align-self: flex-start;

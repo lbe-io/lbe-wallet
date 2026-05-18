@@ -50,6 +50,7 @@
   "page.connect.no.account": "No account selected",
   "page.connect.reject": "Reject",
   "page.connect.request.from": "Request from",
+  "page.connect.select.accounts.title": "Select accounts",
   "page.connect.title": "Connect Account",
   "page.connect.wallet.not.found": "Wallet not found",
   "page.custom.token.address.label": "Token address / denom",

@@ -36,14 +36,27 @@ const buildRuntimeUnsupportedChainError = async (chainId: string, message: strin
   });
 };
 
-export const loadSelectAddressGroups = async ({ token, selectedAccount }: { token: ChainToken | null; selectedAccount?: SendFlowSelectedAccountLike | null }): Promise<SelectAddressCollapseGroup[]> => {
+export const loadSelectAddressGroups = async ({
+  token,
+  selectedAccount,
+  excludeSelectedAccount = true,
+}: {
+  token: ChainToken | null;
+  selectedAccount?: SendFlowSelectedAccountLike | null;
+  excludeSelectedAccount?: boolean;
+}): Promise<SelectAddressCollapseGroup[]> => {
   const targetChainId = token?.chainId || '';
   const runtimeChain = targetChainId ? await getRuntimeChainInterpretationByChainId(targetChainId) : undefined;
   const supportsAddressDerivation = hasRuntimeChainCapability(runtimeChain, 'addressDerivation');
   const wallets = await getAllWallets();
   const collapses = await Promise.all(
     wallets.map(async (item) => {
-      const accounts = (await getAccountsByWalletId(item.id)).filter((account) => !(account.wid === selectedAccount?.wid && account.index === selectedAccount?.index));
+      const accounts = (await getAccountsByWalletId(item.id)).filter((account) => {
+        if (!excludeSelectedAccount) {
+          return true;
+        }
+        return !(account.wid === selectedAccount?.wid && account.index === selectedAccount?.index);
+      });
       const addresses = await Promise.all(
         accounts.map(async (account) => {
           const address = targetChainId && supportsAddressDerivation ? await getAddressByChainId(account.wid, account.index, targetChainId) : undefined;
