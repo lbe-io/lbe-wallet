@@ -4,7 +4,6 @@ import type { CollapseProps } from 'antd';
 import FullScreen from '@/components/FullScreen';
 import Item from '@/components/Item';
 import { useTranslation } from '@/popup/hooks/useTranslation';
-import '../../../modal/selectAddress/index.css';
 import './index.css';
 
 const { Text } = Typography;

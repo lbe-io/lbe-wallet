@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useApproval } from '@/app/hooks';
 import { Flex, Button, Typography, Avatar, message } from 'antd';
 import { useWalletEntitySelector } from '@/popup/hooks/useWalletEntitySelector';
@@ -11,6 +11,7 @@ import type { SuggestedRuntimeChainDisplayPropShape } from '@/cosmos/chains/sugg
 import { buildRequestedRuntimeChainDisplayContext, buildSuggestedRuntimeChainDisplayPropShape, buildSuggestedRuntimeChainDisplayPropShapeFromPreview } from '@/cosmos/chains/runtimeChainDisplayAdapter';
 import { buildRuntimeChainApprovalAddressDisplayContext } from '@/cosmos/chains/runtimeChainAddressDisplayAdapter';
 import type { ConnectApprovalPageParams } from '@/popup/types/approvalUi';
+import type { SelectAddressCollapseGroup } from '@/popup/types/popupUi';
 import ApprovalSelectAddress, { type ApprovalAddressCandidate } from '@/popup/app/approval/component/ApprovalSelectAddress';
 import { loadSelectAddressGroups } from '@/popup/utils/sendFlowFacade';
 
@@ -39,6 +40,99 @@ const resolveRequestedChainId = (params?: ConnectApprovalPageParams) => {
   return '';
 };
 
+type FlattenedAddressCandidate = {
+  walletId: string;
+  walletName: string;
+  address: string;
+};
+
+const flattenAddressGroups = (groups: SelectAddressCollapseGroup[]): FlattenedAddressCandidate[] => {
+  return groups.flatMap((group) =>
+    (group.accounts || []).map((address) => ({
+      walletId: group.key,
+      walletName: group.name || '',
+      address,
+    })),
+  );
+};
+
+const parseAccountIndex = (value: ApprovalAddressCandidate['accountIndex']) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : Number.POSITIVE_INFINITY;
+};
+
+const sortApprovalCandidates = (candidates: ApprovalAddressCandidate[]) => {
+  return [...candidates].sort((a, b) => {
+    const walletNameDiff = (a.walletName || '').localeCompare(b.walletName || '', undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    });
+    if (walletNameDiff !== 0) {
+      return walletNameDiff;
+    }
+
+    const accountIndexDiff = parseAccountIndex(a.accountIndex) - parseAccountIndex(b.accountIndex);
+    if (accountIndexDiff !== 0) {
+      return accountIndexDiff;
+    }
+
+    return (a.address || '').localeCompare(b.address || '');
+  });
+};
+
+const dedupeCandidatesByAccountId = (candidates: (ApprovalAddressCandidate | null)[]) => {
+  const dedupedByAccountId = new Map<string, ApprovalAddressCandidate>();
+  for (const candidate of candidates) {
+    if (!candidate) {
+      continue;
+    }
+    if (!dedupedByAccountId.has(candidate.accountId)) {
+      dedupedByAccountId.set(candidate.accountId, candidate);
+    }
+  }
+
+  return Array.from(dedupedByAccountId.values());
+};
+
+const isLatestRequest = (latestRequestIdRef: { current: number }, requestId: number) => latestRequestIdRef.current === requestId;
+
+const buildApprovalAddressCandidates = async (params: {
+  flattenedAddresses: FlattenedAddressCandidate[];
+  selectedWalletName: string;
+  addressTitle: string;
+}) => {
+  const { flattenedAddresses, selectedWalletName, addressTitle } = params;
+
+  const rawCandidates = await Promise.all(
+    flattenedAddresses.map(async ({ walletId, walletName, address }) => {
+      const match = await getWalletAccountByAddress(address);
+      const account = match?.account;
+      const wallet = match?.wallet;
+      if (!account?.id || !account?.wid) {
+        return null;
+      }
+
+      const normalizedIndex = String(account.index ?? '');
+      if (!normalizedIndex) {
+        return null;
+      }
+
+      return {
+        id: account.id,
+        accountId: account.id,
+        walletId: account.wid || walletId,
+        accountIndex: normalizedIndex,
+        accountName: account.name || '',
+        walletName: wallet?.name || walletName || selectedWalletName || '',
+        address,
+        addressTitle,
+      } as ApprovalAddressCandidate;
+    }),
+  );
+
+  return sortApprovalCandidates(dedupeCandidatesByAccountId(rawCandidates));
+};
+
 export default function Connect({ params }: { params: ConnectApprovalPageParams }) {
   const { t } = useTranslation();
   const session = params.preview?.session || params.session;
@@ -51,19 +145,18 @@ export default function Connect({ params }: { params: ConnectApprovalPageParams 
   const [chainDisplayName, setChainDisplayName] = useState('');
   const [chainDisplayTitle, setChainDisplayTitle] = useState('');
   const [addressLabel, setAddressLabel] = useState(t('page.connect.address.label'));
-  const [addressTitle, setAddressTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const latestAddressRequestIdRef = useRef(0);
 
   const requestedChainId = params.preview?.requestedChainId || resolveRequestedChainId(params);
   const preferredChain = requestedChainId || activeChainId || selectedChain?.chainId || selectedChain?.type || '';
   const activeCandidate = addressCandidates.find((item) => item.id === selectedCandidateId) || addressCandidates[0];
-
-  useEffect(() => {
-    setAddressTitle(activeCandidate?.addressTitle || '');
-  }, [activeCandidate]);
+  const addressTitle = activeCandidate?.addressTitle || '';
 
   const getAddress = async () => {
+    const requestId = ++latestAddressRequestIdRef.current;
+
     try {
       setLoading(true);
       setError('');
@@ -98,9 +191,18 @@ export default function Connect({ params }: { params: ConnectApprovalPageParams 
             })
           : buildSuggestedRuntimeChainDisplayPropShapeFromPreview(params.preview);
 
+      if (!isLatestRequest(latestAddressRequestIdRef, requestId)) {
+        return;
+      }
+
+      const resolvedChainTitle =
+        suggestedDisplayProps?.chainTitle || displayChain.nativeAssetDisplay?.previewExplanation || params.preview?.requestedNativeAssetExplanation || params.preview?.requestedChainTitle || displayChain.chainTitle;
+      const resolvedAddressLabel = suggestedDisplayProps?.addressLabel || params.preview?.requestedAddressLabel || t('page.connect.address.label');
+      const resolvedAddressTitle = suggestedDisplayProps?.addressTitle || params.preview?.requestedAddressExplanation || params.preview?.requestedAddressTitle || '';
+
       setChainDisplayName(displayChain.chainLabel);
-      setChainDisplayTitle(suggestedDisplayProps?.chainTitle || displayChain.nativeAssetDisplay?.previewExplanation || params.preview?.requestedNativeAssetExplanation || params.preview?.requestedChainTitle || displayChain.chainTitle);
-      setAddressLabel(suggestedDisplayProps?.addressLabel || params.preview?.requestedAddressLabel || t('page.connect.address.label'));
+      setChainDisplayTitle(resolvedChainTitle);
+      setAddressLabel(resolvedAddressLabel);
 
       const collapses = await loadSelectAddressGroups({
         token: {
@@ -110,52 +212,18 @@ export default function Connect({ params }: { params: ConnectApprovalPageParams 
         excludeSelectedAccount: false,
       });
 
-      const allAddresses = collapses.flatMap((group) =>
-        (group.accounts || []).map((address) => ({
-          walletId: group.key,
-          walletName: group.name || '',
-          address,
-        })),
-      );
-
-      const rawCandidates = await Promise.all(
-        allAddresses.map(async ({ walletId, walletName, address }) => {
-          const match = await getWalletAccountByAddress(address);
-          const account = match?.account;
-          const wallet = match?.wallet;
-          if (!account?.id || !account?.wid) {
-            return null;
-          }
-          const normalizedIndex = String(account.index ?? '');
-          if (!normalizedIndex) {
-            return null;
-          }
-          return {
-            id: account.id,
-            accountId: account.id,
-            walletId: account.wid,
-            accountIndex: normalizedIndex,
-            accountName: account.name || '',
-            walletName: wallet?.name || walletName || selectedWallet?.name || '',
-            address,
-            addressTitle: suggestedDisplayProps?.addressTitle || params.preview?.requestedAddressExplanation || params.preview?.requestedAddressTitle || '',
-          } as ApprovalAddressCandidate;
-        }),
-      );
-
-      const dedupedByAccountId = new Map<string, ApprovalAddressCandidate>();
-      for (const candidate of rawCandidates) {
-        if (!candidate) {
-          continue;
-        }
-        if (!dedupedByAccountId.has(candidate.accountId)) {
-          dedupedByAccountId.set(candidate.accountId, candidate);
-        }
+      if (!isLatestRequest(latestAddressRequestIdRef, requestId)) {
+        return;
       }
 
-      let nextCandidates = Array.from(dedupedByAccountId.values());
-      if (selectedAccount?.id) {
-        nextCandidates = [...nextCandidates.filter((item) => item.accountId === selectedAccount.id), ...nextCandidates.filter((item) => item.accountId !== selectedAccount.id)];
+      const nextCandidates = await buildApprovalAddressCandidates({
+        flattenedAddresses: flattenAddressGroups(collapses),
+        selectedWalletName: selectedWallet?.name || '',
+        addressTitle: resolvedAddressTitle,
+      });
+
+      if (!isLatestRequest(latestAddressRequestIdRef, requestId)) {
+        return;
       }
 
       if (!nextCandidates.length) {
@@ -173,17 +241,26 @@ export default function Connect({ params }: { params: ConnectApprovalPageParams 
         return nextCandidates[0].id;
       });
     } catch (err: any) {
+      if (!isLatestRequest(latestAddressRequestIdRef, requestId)) {
+        return;
+      }
       setError(err?.message || t('page.connect.error.loading'));
       setAddressCandidates([]);
       setSelectedCandidateId('');
     } finally {
-      setLoading(false);
+      if (isLatestRequest(latestAddressRequestIdRef, requestId)) {
+        setLoading(false);
+      }
     }
   };
 
+  const selectedAccountId = selectedAccount?.id || '';
+  const selectedChainIdentity = selectedChain?.chainId || selectedChain?.type || '';
+  const selectedWalletName = selectedWallet?.name || '';
+
   useEffect(() => {
     void getAddress();
-  }, [activeChainId, requestedChainId, selectedAccount, selectedChain, selectedWallet]);
+  }, [activeChainId, requestedChainId, selectedAccountId, selectedChainIdentity, selectedWalletName]);
 
   const handleConfirm = () => {
     if (!activeCandidate?.address) {
